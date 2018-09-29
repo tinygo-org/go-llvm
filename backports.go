@@ -4,6 +4,7 @@ package llvm
 
 // #include "llvm-c/Core.h"
 // #include <stdlib.h>
+// #include "backports.h"
 import "C"
 import "unsafe"
 
@@ -31,4 +32,11 @@ func InlineAsm(t Type, asmString, constraints string, hasSideEffects, isAlignSta
 	defer C.free(unsafe.Pointer(cconstraints))
 	rv.C = C.LLVMGetInlineAsm(t.C, casm, C.size_t(len(asmString)), cconstraints, C.size_t(len(constraints)), boolToLLVMBool(hasSideEffects), boolToLLVMBool(isAlignStack), C.LLVMInlineAsmDialect(dialect))
 	return
+}
+
+// Coroutine optimization passes
+// https://reviews.llvm.org/D51642 (in progress)
+
+func (pmb PassManagerBuilder) AddCoroutinePassesToExtensionPoints() {
+	C.LLVMPassManagerBuilderAddCoroutinePassesToExtensionPoints_backport(pmb.C);
 }
