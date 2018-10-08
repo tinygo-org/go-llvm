@@ -40,3 +40,16 @@ func InlineAsm(t Type, asmString, constraints string, hasSideEffects, isAlignSta
 func (pmb PassManagerBuilder) AddCoroutinePassesToExtensionPoints() {
 	C.LLVMPassManagerBuilderAddCoroutinePassesToExtensionPoints_backport(pmb.C);
 }
+
+// Erase instruction
+// https://reviews.llvm.org/D52694 (in progress)
+
+func (v Value) EraseFromParentAsInstruction() { C.LLVMInstructionEraseFromParent(v.C) }
+
+// Called function from a CallInst
+// https://reviews.llvm.org/D52972 (in progress)
+
+func (v Value) CalledValue() (rv Value) {
+	rv.C = C.LLVMGetCalledValue(v.C)
+	return
+}

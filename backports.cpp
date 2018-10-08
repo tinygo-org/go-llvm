@@ -1,5 +1,6 @@
 
 #include "backports.h"
+#include "llvm/IR/Instructions.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/Transforms/Coroutines.h"
 
