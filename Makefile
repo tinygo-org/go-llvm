@@ -3,15 +3,21 @@ all: help
 
 .PHONY: all help config update
 
-COMPONENTS = all-targets analysis asmparser asmprinter bitreader bitwriter codegen core debuginfodwarf executionengine instrumentation interpreter ipo irreader linker mc mcjit objcarcopts option profiledata scalaropts support target
+COMPONENTS = all-targets analysis asmparser asmprinter bitreader bitwriter codegen core coroutines debuginfodwarf executionengine instrumentation interpreter ipo irreader linker mc mcjit objcarcopts option profiledata scalaropts support target
 
 VERSION=7.0.0
 VERSION_MAJOR=$(firstword $(subst ., ,$(VERSION)))
 
 SRCDIR=llvm-$(VERSION)
+UNAME_S:=$(shell uname -s)
 
 ifeq ($(BUILDDIR),)
-CONFIG=llvm-config-$(VERSION_MAJOR)
+	ifeq ($(UNAME_S),Darwin)
+	CONFIG=/usr/local/Cellar/llvm/$(VERSION)/bin/llvm-config
+	LDFLAGS=-L/usr/local/opt/libffi/lib -lffi
+	else
+	CONFIG=llvm-config-$(VERSION_MAJOR)
+	endif
 else
 CONFIG=$(BUILDDIR)/bin/llvm-config
 endif
@@ -38,7 +44,7 @@ config:
 	@echo "" >> llvm_config.go
 	@echo "// #cgo CPPFLAGS: $(shell $(CONFIG) --cppflags)" >> llvm_config.go
 	@echo "// #cgo CXXFLAGS: -std=c++11" >> llvm_config.go
-	@echo "// #cgo LDFLAGS: $(shell $(CONFIG) --ldflags --libs --system-libs $(COMPONENTS))" >> llvm_config.go
+	@echo "// #cgo LDFLAGS: $(shell $(CONFIG) --ldflags --libs --system-libs $(COMPONENTS)) $(LDFLAGS)" >> llvm_config.go
 	@echo "import \"C\"" >> llvm_config.go
 	@echo "" >> llvm_config.go
 	@echo "type (run_build_sh int)" >> llvm_config.go
