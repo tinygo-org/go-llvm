@@ -53,3 +53,29 @@ func (v Value) CalledValue() (rv Value) {
 	rv.C = C.LLVMGetCalledValue(v.C)
 	return
 }
+
+// Indices
+// https://reviews.llvm.org/D53883 (in progress)
+
+func (v Value) Indices() []uint32 {
+	num := C.LLVMGetNumIndices(v.C)
+	indicesPtr := C.LLVMGetIndices(v.C)
+	// https://github.com/golang/go/wiki/cgo#turning-c-arrays-into-go-slices
+	rawIndices := (*[1 << 30]C.uint)(unsafe.Pointer(indicesPtr))[:num:num]
+	indices := make([]uint32, num)
+	for i := range indices {
+		indices[i] = uint32(rawIndices[i])
+	}
+	return indices
+}
+
+// Predicates
+// https://reviews.llvm.org/D53884 (in progress)
+
+func (v Value) IntPredicate() IntPredicate {
+	return IntPredicate(C.LLVMGetICmpPredicate(v.C))
+}
+
+func (v Value) FloatPredicate() FloatPredicate {
+	return FloatPredicate(C.LLVMGetFCmpPredicate(v.C))
+}
