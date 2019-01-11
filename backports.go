@@ -44,7 +44,8 @@ func (pmb PassManagerBuilder) AddCoroutinePassesToExtensionPoints() {
 // Erase instruction
 // https://reviews.llvm.org/D52694 (in progress)
 
-func (v Value) EraseFromParentAsInstruction() { C.LLVMInstructionEraseFromParent(v.C) }
+func (v Value) EraseFromParentAsInstruction()  { C.LLVMInstructionEraseFromParent(v.C) }
+func (v Value) RemoveFromParentAsInstruction() { C.LLVMInstructionRemoveFromParent(v.C) }
 
 // Called function from a CallInst
 // https://reviews.llvm.org/D52972 (in progress)
