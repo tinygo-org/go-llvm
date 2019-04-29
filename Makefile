@@ -5,7 +5,7 @@ all: help
 
 COMPONENTS = all-targets analysis asmparser asmprinter bitreader bitwriter codegen core coroutines debuginfodwarf executionengine instrumentation interpreter ipo irreader linker mc mcjit objcarcopts option profiledata scalaropts support target
 
-VERSION=7.0.0
+VERSION=8.0.0
 VERSION_MAJOR=$(firstword $(subst ., ,$(VERSION)))
 
 SRCDIR=llvm-$(VERSION)
