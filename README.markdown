@@ -4,7 +4,7 @@ This library provides bindings to a system-installed LLVM.
 
 Currently supported:
 
-  * LLVM 8 from [apt.llvm.org](http://apt.llvm.org/) on Debian.
+  * LLVM 9 from [apt.llvm.org](http://apt.llvm.org/) on Debian.
 
 ## Usage
 
@@ -32,10 +32,9 @@ newer version of LLVM.
 Most of the files are extracted from the LLVM source tree, specifically all
 \*.go, \*.cpp, and \*.h files come directly from
 [bindings/go/llvm](https://github.com/llvm-mirror/llvm/tree/release_80/bindings/go/llvm)
-in the LLVM source tree. They are all released under the [University of
-Illinois/NCSA Open Source License](http://releases.llvm.org/8.0.0/LICENSE.TXT)
-which is a permissive BSD-like license. Check upstream LLVM for detailed
-copyright information.
+in the LLVM source tree. They are all released under the [Apache License 2.0
+(with LLVM exceptions)](http://releases.llvm.org/9.0.0/LICENSE.TXT). Check
+upstream LLVM for detailed copyright information.
 
 This README, the backports\* files, and the Makefile are separate from LLVM but
 are licensed under the same license.

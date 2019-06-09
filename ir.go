@@ -1,9 +1,8 @@
 //===- ir.go - Bindings for ir --------------------------------------------===//
 //
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
 //
@@ -1302,11 +1301,11 @@ type DebugLoc struct {
 	InlinedAt      Metadata
 }
 func (b Builder) SetCurrentDebugLocation(line, col uint, scope, inlinedAt Metadata) {
-	C.LLVMSetCurrentDebugLocation2(b.C, C.unsigned(line), C.unsigned(col), scope.C, inlinedAt.C)
+	C.LLVMGoSetCurrentDebugLocation(b.C, C.unsigned(line), C.unsigned(col), scope.C, inlinedAt.C)
 }
 // Get current debug location. Please do not call this function until setting debug location with SetCurrentDebugLocation()
 func (b Builder) GetCurrentDebugLocation() (loc DebugLoc) {
-	md := C.LLVMGetCurrentDebugLocation2(b.C)
+	md := C.LLVMGoGetCurrentDebugLocation(b.C)
 	loc.Line = uint(md.Line)
 	loc.Col = uint(md.Col)
 	loc.Scope = Metadata{C: md.Scope}
