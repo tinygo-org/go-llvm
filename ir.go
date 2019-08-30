@@ -999,7 +999,11 @@ func BlockAddress(f Value, bb BasicBlock) (v Value) {
 func (v Value) GlobalParent() (m Module) { m.C = C.LLVMGetGlobalParent(v.C); return }
 func (v Value) IsDeclaration() bool      { return C.LLVMIsDeclaration(v.C) != 0 }
 func (v Value) Linkage() Linkage         { return Linkage(C.LLVMGetLinkage(v.C)) }
-func (v Value) SetLinkage(l Linkage)     { C.LLVMSetLinkage(v.C, C.LLVMLinkage(l)) }
+func (v Value) SetLinkage(l Linkage)     {
+ if v.IsNil() {
+  panic("attempt to set linkage of nil value (this will break code generation)")
+ }
+ C.LLVMSetLinkage(v.C, C.LLVMLinkage(l)) }
 func (v Value) Section() string          { return C.GoString(C.LLVMGetSection(v.C)) }
 func (v Value) SetSection(str string) {
 	cstr := C.CString(str)
