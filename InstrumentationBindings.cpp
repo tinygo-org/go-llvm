@@ -16,6 +16,9 @@
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Transforms/Instrumentation.h"
+#if LLVM_VERSION_MAJOR >= 9
+#include "llvm/Transforms/Instrumentation/AddressSanitizer.h"
+#endif
 #include "llvm/Transforms/Instrumentation/MemorySanitizer.h"
 #include "llvm/Transforms/Instrumentation/ThreadSanitizer.h"
 
@@ -26,7 +29,11 @@ void LLVMAddAddressSanitizerFunctionPass(LLVMPassManagerRef PM) {
 }
 
 void LLVMAddAddressSanitizerModulePass(LLVMPassManagerRef PM) {
+#if LLVM_VERSION_MAJOR >= 9
+  unwrap(PM)->add(createModuleAddressSanitizerLegacyPassPass());
+#else
   unwrap(PM)->add(createAddressSanitizerModulePass());
+#endif
 }
 
 void LLVMAddThreadSanitizerPass(LLVMPassManagerRef PM) {
