@@ -20,3 +20,9 @@ void LLVMPassManagerBuilderAddCoroutinePassesToExtensionPoints_backport(LLVMPass
   llvm::PassManagerBuilder *Builder = llvm::unwrap(PMB);
   llvm::addCoroutinePassesToExtensionPoints(*Builder);
 }
+
+void LLVMGlobalObjectAddMetadata(LLVMValueRef Global, unsigned KindID, LLVMMetadataRef MD) {
+  llvm::MDNode *N = MD ? llvm::unwrap<llvm::MDNode>(MD) : nullptr;
+  llvm::GlobalObject *O = llvm::unwrap<llvm::GlobalObject>(Global);
+  O->addMetadata(KindID, *N);
+}

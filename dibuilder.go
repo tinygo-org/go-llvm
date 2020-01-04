@@ -14,6 +14,7 @@ package llvm
 
 /*
 #include "IRBindings.h"
+#include "backports.h"
 #include <stdlib.h>
 */
 import "C"
@@ -216,6 +217,43 @@ func (d *DIBuilder) CreateFunction(diScope Metadata, f DIFunction) Metadata {
 		C.unsigned(f.ScopeLine),
 		C.LLVMDIFlags(f.Flags),
 		C.LLVMBool(boolToCInt(f.Optimized)),
+	)
+	return Metadata{C: result}
+}
+
+// DIGlobalVariableExpression holds the values for creating global variable
+// debug metadata.
+type DIGlobalVariableExpression struct {
+	Name        string   // Name of the variable.
+	LinkageName string   // Mangled name of the variable
+	File        Metadata // File where this variable is defined.
+	Line        int      // Line number.
+	Type        Metadata // Variable Type.
+	LocalToUnit bool     // Flag indicating whether this variable is externally visible or not.
+	Expr        Metadata // The location of the global relative to the attached GlobalVariable.
+	Decl        Metadata // Reference to the corresponding declaration.
+	AlignInBits uint32   // Variable alignment(or 0 if no alignment attr was specified).
+}
+
+// CreateGlobalVariableExpression creates a new descriptor for the specified
+// global variable.
+func (d *DIBuilder) CreateGlobalVariableExpression(diScope Metadata, g DIGlobalVariableExpression) Metadata {
+	name := C.CString(g.Name)
+	defer C.free(unsafe.Pointer(name))
+	linkageName := C.CString(g.LinkageName)
+	defer C.free(unsafe.Pointer(linkageName))
+	result := C.LLVMDIBuilderCreateGlobalVariableExpression(
+		d.ref,                       // Builder
+		diScope.C,                   // Scope
+		name, C.size_t(len(g.Name)), // Name, NameLen
+		linkageName, C.size_t(len(g.LinkageName)), // Linkage, LinkLen
+		g.File.C,                              // File
+		C.unsigned(g.Line),                    // LineNo
+		g.Type.C,                              // Ty
+		C.LLVMBool(boolToCInt(g.LocalToUnit)), // LocalToUnit
+		g.Expr.C,                              // Expr
+		g.Decl.C,                              // Decl
+		C.uint32_t(g.AlignInBits),             // AlignInBits
 	)
 	return Metadata{C: result}
 }
@@ -587,6 +625,11 @@ func (v Value) SetSubprogram(sp Metadata) {
 func (v Value) Subprogram() (md Metadata) {
 	md.C = C.LLVMGetSubprogram(v.C)
 	return
+}
+
+// AddMetadata adds a metadata entry of the given kind to a global object.
+func (v Value) AddMetadata(kind int, md Metadata) {
+	C.LLVMGlobalObjectAddMetadata(v.C, C.unsigned(kind), md.C)
 }
 
 func boolToCInt(v bool) C.int {
