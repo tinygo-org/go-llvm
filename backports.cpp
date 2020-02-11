@@ -3,6 +3,7 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/Transforms/Coroutines.h"
+#include "llvm-c/DebugInfo.h"
 
 namespace llvm {
 
@@ -25,4 +26,16 @@ void LLVMGlobalObjectAddMetadata(LLVMValueRef Global, unsigned KindID, LLVMMetad
   llvm::MDNode *N = MD ? llvm::unwrap<llvm::MDNode>(MD) : nullptr;
   llvm::GlobalObject *O = llvm::unwrap<llvm::GlobalObject>(Global);
   O->addMetadata(KindID, *N);
+}
+
+LLVMMetadataRef
+LLVMGoDIBuilderCreateTypedef(LLVMDIBuilderRef Builder, LLVMMetadataRef Type,
+                             const char *Name, size_t NameLen,
+                             LLVMMetadataRef File, unsigned LineNo,
+                             LLVMMetadataRef Scope, uint32_t AlignInBits) {
+#if LLVM_VERSION_MAJOR >= 10
+	return LLVMDIBuilderCreateTypedef(Builder, Type, Name, NameLen, File, LineNo, Scope, AlignInBits);
+#else
+	return LLVMDIBuilderCreateTypedef(Builder, Type, Name, NameLen, File, LineNo, Scope);
+#endif
 }

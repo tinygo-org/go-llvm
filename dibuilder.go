@@ -45,7 +45,7 @@ const (
 	FlagProtected
 	FlagFwdDecl
 	FlagAppleBlock
-	FlagBlockByrefStruct
+	FlagReserved
 	FlagVirtual
 	FlagArtificial
 	FlagExplicit
@@ -537,18 +537,19 @@ func (d *DIBuilder) CreateArrayType(t DIArrayType) Metadata {
 
 // DITypedef holds the values for creating typedef type debug metadata.
 type DITypedef struct {
-	Type    Metadata
-	Name    string
-	File    Metadata
-	Line    int
-	Context Metadata
+	Type        Metadata
+	Name        string
+	File        Metadata
+	Line        int
+	Context     Metadata
+	AlignInBits uint32
 }
 
 // CreateTypedef creates typedef type debug metadata.
 func (d *DIBuilder) CreateTypedef(t DITypedef) Metadata {
 	name := C.CString(t.Name)
 	defer C.free(unsafe.Pointer(name))
-	result := C.LLVMDIBuilderCreateTypedef(
+	result := C.LLVMGoDIBuilderCreateTypedef(
 		d.ref,
 		t.Type.C,
 		name,
@@ -556,6 +557,7 @@ func (d *DIBuilder) CreateTypedef(t DITypedef) Metadata {
 		t.File.C,
 		C.unsigned(t.Line),
 		t.Context.C,
+		C.uint32_t(t.AlignInBits),
 	)
 	return Metadata{C: result}
 }
