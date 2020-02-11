@@ -9,4 +9,4 @@ package llvm
 // #cgo LDFLAGS: -L/usr/local/opt/llvm@9/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVM -lz -lcurses -lm -lxml2 -L/usr/local/opt/libffi/lib -lffi
 import "C"
 
-type (run_build_sh int)
+type run_build_sh int

@@ -52,7 +52,7 @@ config:
 	@echo "// #cgo LDFLAGS: $(LDFLAGS)" >> llvm_config_$(GOOS).go
 	@echo "import \"C\"" >> llvm_config_$(GOOS).go
 	@echo "" >> llvm_config_$(GOOS).go
-	@echo "type (run_build_sh int)" >> llvm_config_$(GOOS).go
+	@echo "type run_build_sh int" >> llvm_config_$(GOOS).go
 
 update: $(SRCDIR) clean
 	@cp -rp "$(SRCDIR)"/bindings/go/llvm/*.go .

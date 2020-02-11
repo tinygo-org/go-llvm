@@ -11,7 +11,7 @@ import "C"
 // https://reviews.llvm.org/D51642 (in progress)
 
 func (pmb PassManagerBuilder) AddCoroutinePassesToExtensionPoints() {
-	C.LLVMPassManagerBuilderAddCoroutinePassesToExtensionPoints_backport(pmb.C);
+	C.LLVMPassManagerBuilderAddCoroutinePassesToExtensionPoints_backport(pmb.C)
 }
 
 // Erase instruction
