@@ -9,4 +9,4 @@ package llvm
 // #cgo LDFLAGS: -L/usr/lib/llvm-9/lib  -lLLVM-9
 import "C"
 
-type (run_build_sh int)
+type run_build_sh int
