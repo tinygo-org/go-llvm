@@ -852,6 +852,11 @@ func ConstFloatFromString(t Type, str string) (v Value) {
 
 func (v Value) ZExtValue() uint64 { return uint64(C.LLVMConstIntGetZExtValue(v.C)) }
 func (v Value) SExtValue() int64  { return int64(C.LLVMConstIntGetSExtValue(v.C)) }
+func (v Value) DoubleValue() (result float64, inexact bool) {
+	var losesInfo C.LLVMBool
+	doubleResult := C.LLVMConstRealGetDouble(v.C, &losesInfo)
+	return float64(doubleResult), losesInfo != 0
+}
 
 // Operations on composite constants
 func (c Context) ConstString(str string, addnull bool) (v Value) {
