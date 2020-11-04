@@ -1,5 +1,5 @@
 // +build !byollvm
-// +build llvm11
+// +build linux,llvm11
 
 package llvm
 
