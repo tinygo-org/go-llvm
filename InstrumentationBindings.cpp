@@ -44,5 +44,9 @@ void LLVMAddDataFlowSanitizerPass(LLVMPassManagerRef PM,
   for (int i = 0; i != ABIListFilesNum; ++i) {
     ABIListFilesVec.push_back(ABIListFiles[i]);
   }
+#if LLVM_VERSION_MAJOR >= 12
+  unwrap(PM)->add(createDataFlowSanitizerLegacyPassPass(ABIListFilesVec));
+#else
   unwrap(PM)->add(createDataFlowSanitizerPass(ABIListFilesVec));
+#endif
 }
