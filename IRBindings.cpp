@@ -25,6 +25,11 @@ LLVMMetadataRef LLVMConstantAsMetadata(LLVMValueRef C) {
   return wrap(ConstantAsMetadata::get(unwrap<Constant>(C)));
 }
 
+void LLVMAddModuleFlagUInt32(LLVMModuleRef M, LLVMContextRef C, const char *key, uint32_t val) {
+  Type *Int32Ty = Type::getInt32Ty(*unwrap(C));
+  unwrap(M)->addModuleFlag(Module::ModFlagBehavior::Error, key, ConstantInt::get(Int32Ty, val));
+}
+
 LLVMMetadataRef LLVMMDString2(LLVMContextRef C, const char *Str, unsigned SLen) {
   return wrap(MDString::get(*unwrap(C), StringRef(Str, SLen)));
 }

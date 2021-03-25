@@ -49,6 +49,8 @@ void LLVMGoSetCurrentDebugLocation(LLVMBuilderRef Bref, unsigned Line,
 
 struct LLVMDebugLocMetadata LLVMGoGetCurrentDebugLocation(LLVMBuilderRef Bref);
 
+void LLVMAddModuleFlagUInt32(LLVMModuleRef M, LLVMContextRef C, const char *name, uint32_t val);
+
 #ifdef __cplusplus
 }
 

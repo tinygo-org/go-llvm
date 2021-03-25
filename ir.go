@@ -508,6 +508,13 @@ func (m Module) AddNamedMetadataOperand(name string, operand Metadata) {
 	C.LLVMAddNamedMetadataOperand2(m.C, cname, operand.C)
 }
 
+func (m Module) AddModuleFlagUInt32(name string, value uint32) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+
+	C.LLVMAddModuleFlagUInt32(m.C, m.Context().C, cname, C.uint(value))
+}
+
 func (m Module) Context() (c Context) {
 	c.C = C.LLVMGetModuleContext(m.C)
 	return
