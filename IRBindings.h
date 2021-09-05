@@ -49,9 +49,14 @@ void LLVMGoSetCurrentDebugLocation(LLVMBuilderRef Bref, unsigned Line,
 
 struct LLVMDebugLocMetadata LLVMGoGetCurrentDebugLocation(LLVMBuilderRef Bref);
 
+LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
+                                size_t AsmStringSize, char *Constraints,
+                                size_t ConstraintsSize, LLVMBool HasSideEffects,
+                                LLVMBool IsAlignStack,
+                                LLVMInlineAsmDialect Dialect, LLVMBool CanThrow);
+
 #ifdef __cplusplus
 }
-
 #endif
 
 #endif

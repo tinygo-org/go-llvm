@@ -73,3 +73,23 @@ LLVMDebugLocMetadata LLVMGoGetCurrentDebugLocation(LLVMBuilderRef Bref) {
   return md;
 }
 
+LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
+                                size_t AsmStringSize, char *Constraints,
+                                size_t ConstraintsSize, LLVMBool HasSideEffects,
+                                LLVMBool IsAlignStack,
+                                LLVMInlineAsmDialect Dialect, LLVMBool CanThrow)
+{
+#if LLVM_VERSION_MAJOR >= 13
+  return LLVMGetInlineAsm(Ty, AsmString,
+                          AsmStringSize, Constraints,
+                          ConstraintsSize, HasSideEffects,
+                          IsAlignStack,
+                          Dialect, CanThrow);
+#else
+  return LLVMGetInlineAsm(Ty, AsmString,
+                          AsmStringSize, Constraints,
+                          ConstraintsSize, HasSideEffects,
+                          IsAlignStack,
+                          Dialect);
+#endif
+}
