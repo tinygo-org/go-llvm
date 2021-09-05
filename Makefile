@@ -43,6 +43,7 @@ help:
 
 config:
 	@echo "// +build !byollvm" > llvm_config_$(GOOS).go
+	@echo "// +build linux,llvm$(VERSION_MAJOR)" >> llvm_config_$(GOOS).go
 	@echo "" >> llvm_config_$(GOOS).go
 	@echo "package llvm" >> llvm_config_$(GOOS).go
 	@echo "" >> llvm_config_$(GOOS).go
