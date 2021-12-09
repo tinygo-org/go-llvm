@@ -136,7 +136,7 @@ func (d *DIBuilder) CreateCompileUnit(cu DICompileUnit) Metadata {
 	defer C.free(unsafe.Pointer(sysroot))
 	sdk := C.CString(cu.SDK)
 	defer C.free(unsafe.Pointer(sdk))
-	result := C.LLVMGoDIBuilderCreateCompileUnit(
+	result := C.LLVMDIBuilderCreateCompileUnit(
 		d.ref,
 		C.LLVMDWARFSourceLanguage(cu.Language),
 		C.LLVMDIBuilderCreateFile(d.ref, file, C.size_t(len(cu.File)), dir, C.size_t(len(cu.Dir))),
@@ -557,7 +557,7 @@ type DITypedef struct {
 func (d *DIBuilder) CreateTypedef(t DITypedef) Metadata {
 	name := C.CString(t.Name)
 	defer C.free(unsafe.Pointer(name))
-	result := C.LLVMGoDIBuilderCreateTypedef(
+	result := C.LLVMDIBuilderCreateTypedef(
 		d.ref,
 		t.Type.C,
 		name,

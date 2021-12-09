@@ -16,6 +16,7 @@ package llvm
 #include "llvm-c/Core.h"
 #include "llvm-c/Comdat.h"
 #include "IRBindings.h"
+#include "backports.h"
 #include <stdlib.h>
 */
 import "C"
@@ -286,11 +287,10 @@ const (
 //-------------------------------------------------------------------------
 
 const (
-	AnyComdatSelectionKind          ComdatSelectionKind = C.LLVMAnyComdatSelectionKind
-	ExactMatchComdatSelectionKind   ComdatSelectionKind = C.LLVMExactMatchComdatSelectionKind
-	LargestComdatSelectionKind      ComdatSelectionKind = C.LLVMLargestComdatSelectionKind
-	NoDuplicatesComdatSelectionKind ComdatSelectionKind = C.LLVMNoDuplicatesComdatSelectionKind
-	SameSizeComdatSelectionKind     ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
+	AnyComdatSelectionKind        ComdatSelectionKind = C.LLVMAnyComdatSelectionKind
+	ExactMatchComdatSelectionKind ComdatSelectionKind = C.LLVMExactMatchComdatSelectionKind
+	LargestComdatSelectionKind    ComdatSelectionKind = C.LLVMLargestComdatSelectionKind
+	SameSizeComdatSelectionKind   ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
 )
 
 //-------------------------------------------------------------------------
@@ -1307,12 +1307,12 @@ func (v Value) IncomingBlock(i int) (bb BasicBlock) {
 }
 
 // Operations on inline assembly
-func InlineAsm(t Type, asmString, constraints string, hasSideEffects, isAlignStack bool, dialect InlineAsmDialect) (rv Value) {
+func InlineAsm(t Type, asmString, constraints string, hasSideEffects, isAlignStack bool, dialect InlineAsmDialect, canThrow bool) (rv Value) {
 	casm := C.CString(asmString)
 	defer C.free(unsafe.Pointer(casm))
 	cconstraints := C.CString(constraints)
 	defer C.free(unsafe.Pointer(cconstraints))
-	rv.C = C.LLVMGetInlineAsm(t.C, casm, C.size_t(len(asmString)), cconstraints, C.size_t(len(constraints)), boolToLLVMBool(hasSideEffects), boolToLLVMBool(isAlignStack), C.LLVMInlineAsmDialect(dialect))
+	rv.C = C.LLVMGoGetInlineAsm(t.C, casm, C.size_t(len(asmString)), cconstraints, C.size_t(len(constraints)), boolToLLVMBool(hasSideEffects), boolToLLVMBool(isAlignStack), C.LLVMInlineAsmDialect(dialect), boolToLLVMBool(canThrow))
 	return
 }
 
