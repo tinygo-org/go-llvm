@@ -1,0 +1,52 @@
+# Test whether we can link to LLVM installed from apt.llvm.org or Homebrew.
+
+name: Test
+
+on: push
+
+jobs:
+  test-macos-llvm:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          brew install llvm@11
+      - name: Test LLVM 11
+        run:
+          go test -v -tags=llvm11
+      - name: Test default LLVM
+        run:
+          go test -v
+  test-linux-llvm-12:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          echo 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends llvm-12-dev
+      - name: Test LLVM 12
+        run:
+          go test -v -tags=llvm12
+      - name: Test default LLVM
+        run:
+          go test -v
+  test-linux-llvm-11:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          echo 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends llvm-11-dev
+      - name: Test LLVM 11
+        run:
+          go test -v -tags=llvm11
