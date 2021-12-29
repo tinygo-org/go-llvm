@@ -13,6 +13,7 @@ UNAME_S:=$(shell uname -s)
 
 GOOS := $(shell go env GOOS)
 
+# TODO: fix this for darwin-arm64
 LDFLAGS = $(shell $(CONFIG) --ldflags --libs --system-libs $(COMPONENTS))
 ifeq ($(BUILDDIR),)
 	ifeq ($(UNAME_S),Darwin)
