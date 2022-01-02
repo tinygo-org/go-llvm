@@ -1,8 +1,9 @@
 # Test whether we can link to LLVM installed from apt.llvm.org or Homebrew.
+---
 
 name: Test
 
-on: push
+on: [push, pull_request]
 
 jobs:
   test-macos-llvm:
