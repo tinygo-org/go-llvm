@@ -5,7 +5,7 @@ name: Test
 on: push
 
 jobs:
-  test-macos-llvm:
+  test-macos-llvm-11:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -16,9 +16,31 @@ jobs:
       - name: Test LLVM 11
         run:
           go test -v -tags=llvm11
+  test-macos-llvm-12:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          brew install llvm@12
+      - name: Test LLVM 12
+        run:
+          go test -v -tags=llvm12
       - name: Test default LLVM
         run:
           go test -v
+  test-macos-llvm-13:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          brew install llvm@13
+      - name: Test LLVM 13
+        run:
+          go test -v -tags=llvm13
   test-linux-llvm-13:
     runs-on: ubuntu-20.04
     steps:
