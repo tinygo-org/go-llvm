@@ -1,5 +1,5 @@
-//go:build !byollvm && darwin && llvm13
-// +build !byollvm,darwin,llvm13
+//go:build !byollvm && darwin && !llvm11 && !llvm12
+// +build !byollvm,darwin,!llvm11,!llvm12
 
 package llvm
 
