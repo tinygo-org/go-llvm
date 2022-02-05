@@ -28,6 +28,9 @@ LLVMMetadataRef LLVMGoDIBuilderCreateCompileUnit(
 
 LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M);
 
+LLVMMetadataRef LLVMGoDIBuilderCreateExpression(LLVMDIBuilderRef Builder,
+                                                uint64_t *Addr, size_t Length);
+
 #ifdef __cplusplus
 }
 #endif /* defined(__cplusplus) */
