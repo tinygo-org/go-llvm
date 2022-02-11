@@ -26,6 +26,8 @@ LLVMMetadataRef LLVMGoDIBuilderCreateCompileUnit(
     LLVMBool DebugInfoForProfiling, const char *SysRoot, size_t SysRootLen,
     const char *SDK, size_t SDKLen);
 
+LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M);
+
 #ifdef __cplusplus
 }
 #endif /* defined(__cplusplus) */

@@ -1,6 +1,10 @@
 
 #include "backports.h"
 #include "llvm/IR/Instructions.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/Module.h"
+#include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Transforms/IPO.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/Transforms/Coroutines.h"
 #include "llvm-c/DebugInfo.h"
@@ -61,4 +65,14 @@ LLVMMetadataRef LLVMGoDIBuilderCreateCompileUnit(
     ProducerLen, isOptimized, Flags, FlagsLen, RuntimeVer, SplitName,
     SplitNameLen, Kind, DWOId, SplitDebugInlining, DebugInfoForProfiling);
 #endif
+}
+
+// See https://reviews.llvm.org/D119431
+LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
+  std::string Data;
+  llvm::raw_string_ostream OS(Data);
+  llvm::legacy::PassManager PM;
+  PM.add(createWriteThinLTOBitcodePass(OS));
+  PM.run(*llvm::unwrap(M));
+  return llvm::wrap(llvm::MemoryBuffer::getMemBufferCopy(OS.str()).release());
 }
