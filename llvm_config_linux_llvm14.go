@@ -1,5 +1,5 @@
-//go:build !byollvm && linux && llvm14
-// +build !byollvm,linux,llvm14
+//go:build !byollvm && linux && !llvm13
+// +build !byollvm,linux,!llvm13
 
 package llvm
 
