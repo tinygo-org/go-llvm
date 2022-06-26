@@ -79,17 +79,9 @@ LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 LLVMBool IsAlignStack,
                                 LLVMInlineAsmDialect Dialect, LLVMBool CanThrow)
 {
-#if LLVM_VERSION_MAJOR >= 13
   return LLVMGetInlineAsm(Ty, AsmString,
                           AsmStringSize, Constraints,
                           ConstraintsSize, HasSideEffects,
                           IsAlignStack,
                           Dialect, CanThrow);
-#else
-  return LLVMGetInlineAsm(Ty, AsmString,
-                          AsmStringSize, Constraints,
-                          ConstraintsSize, HasSideEffects,
-                          IsAlignStack,
-                          Dialect);
-#endif
 }

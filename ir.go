@@ -286,12 +286,11 @@ const (
 //-------------------------------------------------------------------------
 
 const (
-	AnyComdatSelectionKind        ComdatSelectionKind = C.LLVMAnyComdatSelectionKind
-	ExactMatchComdatSelectionKind ComdatSelectionKind = C.LLVMExactMatchComdatSelectionKind
-	LargestComdatSelectionKind    ComdatSelectionKind = C.LLVMLargestComdatSelectionKind
-	// LLVM < 13: NoDuplicatesComdatSelectionKind ComdatSelectionKind = C.LLVMNoDuplicatesComdatSelectionKind
-	// LLVM >= 13: NoDeduplicateComdatSelectionKind ComdatSelectionKind = C.LLVMNoDeduplicateComdatSelectionKind
-	SameSizeComdatSelectionKind ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
+	AnyComdatSelectionKind           ComdatSelectionKind = C.LLVMAnyComdatSelectionKind
+	ExactMatchComdatSelectionKind    ComdatSelectionKind = C.LLVMExactMatchComdatSelectionKind
+	LargestComdatSelectionKind       ComdatSelectionKind = C.LLVMLargestComdatSelectionKind
+	NoDeduplicateComdatSelectionKind ComdatSelectionKind = C.LLVMNoDeduplicateComdatSelectionKind
+	SameSizeComdatSelectionKind      ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
 )
 
 //-------------------------------------------------------------------------
