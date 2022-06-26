@@ -291,7 +291,7 @@ const (
 	LargestComdatSelectionKind    ComdatSelectionKind = C.LLVMLargestComdatSelectionKind
 	// LLVM < 13: NoDuplicatesComdatSelectionKind ComdatSelectionKind = C.LLVMNoDuplicatesComdatSelectionKind
 	// LLVM >= 13: NoDeduplicateComdatSelectionKind ComdatSelectionKind = C.LLVMNoDeduplicateComdatSelectionKind
-	SameSizeComdatSelectionKind   ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
+	SameSizeComdatSelectionKind ComdatSelectionKind = C.LLVMSameSizeComdatSelectionKind
 )
 
 //-------------------------------------------------------------------------
@@ -957,20 +957,26 @@ func ConstInBoundsGEP(v Value, indices []Value) (rv Value) {
 	rv.C = C.LLVMConstInBoundsGEP(v.C, ptr, nvals)
 	return
 }
-func ConstTrunc(v Value, t Type) (rv Value)         { rv.C = C.LLVMConstTrunc(v.C, t.C); return }
-func ConstSExt(v Value, t Type) (rv Value)          { rv.C = C.LLVMConstSExt(v.C, t.C); return }
-func ConstZExt(v Value, t Type) (rv Value)          { rv.C = C.LLVMConstZExt(v.C, t.C); return }
-func ConstFPTrunc(v Value, t Type) (rv Value)       { rv.C = C.LLVMConstFPTrunc(v.C, t.C); return }
-func ConstFPExt(v Value, t Type) (rv Value)         { rv.C = C.LLVMConstFPExt(v.C, t.C); return }
-func ConstUIToFP(v Value, t Type) (rv Value)        { rv.C = C.LLVMConstUIToFP(v.C, t.C); return }
-func ConstSIToFP(v Value, t Type) (rv Value)        { rv.C = C.LLVMConstSIToFP(v.C, t.C); return }
-func ConstFPToUI(v Value, t Type) (rv Value)        { rv.C = C.LLVMConstFPToUI(v.C, t.C); return }
-func ConstFPToSI(v Value, t Type) (rv Value)        { rv.C = C.LLVMConstFPToSI(v.C, t.C); return }
-func ConstPtrToInt(v Value, t Type) (rv Value)      { rv.C = C.LLVMConstPtrToInt(v.C, t.C); return }
-func ConstIntToPtr(v Value, t Type) (rv Value)      { rv.C = C.LLVMConstIntToPtr(v.C, t.C); return }
-func ConstBitCast(v Value, t Type) (rv Value)       { rv.C = C.LLVMConstBitCast(v.C, t.C); return }
-func ConstZExtOrBitCast(v Value, t Type) (rv Value) { rv.C = C.LLVMConstZExtOrBitCast(v.C, t.C); return }
-func ConstSExtOrBitCast(v Value, t Type) (rv Value) { rv.C = C.LLVMConstSExtOrBitCast(v.C, t.C); return }
+func ConstTrunc(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstTrunc(v.C, t.C); return }
+func ConstSExt(v Value, t Type) (rv Value)     { rv.C = C.LLVMConstSExt(v.C, t.C); return }
+func ConstZExt(v Value, t Type) (rv Value)     { rv.C = C.LLVMConstZExt(v.C, t.C); return }
+func ConstFPTrunc(v Value, t Type) (rv Value)  { rv.C = C.LLVMConstFPTrunc(v.C, t.C); return }
+func ConstFPExt(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstFPExt(v.C, t.C); return }
+func ConstUIToFP(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstUIToFP(v.C, t.C); return }
+func ConstSIToFP(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstSIToFP(v.C, t.C); return }
+func ConstFPToUI(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstFPToUI(v.C, t.C); return }
+func ConstFPToSI(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstFPToSI(v.C, t.C); return }
+func ConstPtrToInt(v Value, t Type) (rv Value) { rv.C = C.LLVMConstPtrToInt(v.C, t.C); return }
+func ConstIntToPtr(v Value, t Type) (rv Value) { rv.C = C.LLVMConstIntToPtr(v.C, t.C); return }
+func ConstBitCast(v Value, t Type) (rv Value)  { rv.C = C.LLVMConstBitCast(v.C, t.C); return }
+func ConstZExtOrBitCast(v Value, t Type) (rv Value) {
+	rv.C = C.LLVMConstZExtOrBitCast(v.C, t.C)
+	return
+}
+func ConstSExtOrBitCast(v Value, t Type) (rv Value) {
+	rv.C = C.LLVMConstSExtOrBitCast(v.C, t.C)
+	return
+}
 func ConstTruncOrBitCast(v Value, t Type) (rv Value) {
 	rv.C = C.LLVMConstTruncOrBitCast(v.C, t.C)
 	return
@@ -1227,11 +1233,26 @@ func (v Value) BasicBlocks() []BasicBlock {
 	C.LLVMGetBasicBlocks(v.C, llvmBasicBlockRefPtr(&out[0]))
 	return out
 }
-func (v Value) FirstBasicBlock() (bb BasicBlock)    { bb.C = C.LLVMGetFirstBasicBlock(v.C); return }
-func (v Value) LastBasicBlock() (bb BasicBlock)     { bb.C = C.LLVMGetLastBasicBlock(v.C); return }
-func NextBasicBlock(bb BasicBlock) (rbb BasicBlock) { rbb.C = C.LLVMGetNextBasicBlock(bb.C); return }
-func PrevBasicBlock(bb BasicBlock) (rbb BasicBlock) { rbb.C = C.LLVMGetPreviousBasicBlock(bb.C); return }
-func (v Value) EntryBasicBlock() (bb BasicBlock)    { bb.C = C.LLVMGetEntryBasicBlock(v.C); return }
+func (v Value) FirstBasicBlock() (bb BasicBlock) {
+	bb.C = C.LLVMGetFirstBasicBlock(v.C)
+	return
+}
+func (v Value) LastBasicBlock() (bb BasicBlock) {
+	bb.C = C.LLVMGetLastBasicBlock(v.C)
+	return
+}
+func NextBasicBlock(bb BasicBlock) (rbb BasicBlock) {
+	rbb.C = C.LLVMGetNextBasicBlock(bb.C)
+	return
+}
+func PrevBasicBlock(bb BasicBlock) (rbb BasicBlock) {
+	rbb.C = C.LLVMGetPreviousBasicBlock(bb.C)
+	return
+}
+func (v Value) EntryBasicBlock() (bb BasicBlock) {
+	bb.C = C.LLVMGetEntryBasicBlock(v.C)
+	return
+}
 func (c Context) AddBasicBlock(f Value, name string) (bb BasicBlock) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
