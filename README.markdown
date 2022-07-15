@@ -11,7 +11,7 @@ Currently supported:
 
 If you have a supported LLVM installation, you should be able to do a simple `go get`:
 
-    go get github.com/tinygo-org/go-llvm
+    go get tinygo.org/x/go-llvm
 
 After downloading, you may have to update the configuration for your system:
 
