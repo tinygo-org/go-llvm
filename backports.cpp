@@ -25,12 +25,3 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
   PM.run(*llvm::unwrap(M));
   return llvm::wrap(llvm::MemoryBuffer::getMemBufferCopy(OS.str()).release());
 }
-
-LLVMMetadataRef LLVMGoDIBuilderCreateExpression(LLVMDIBuilderRef Builder,
-                                                uint64_t *Addr, size_t Length) {
-#if LLVM_VERSION_MAJOR >= 14
-  return LLVMDIBuilderCreateExpression(Builder, Addr, Length);
-#else
-  return LLVMDIBuilderCreateExpression(Builder, (int64_t*)Addr, Length);
-#endif
-}

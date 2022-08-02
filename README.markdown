@@ -4,8 +4,8 @@ This library provides bindings to a system-installed LLVM.
 
 Currently supported:
 
-  * LLVM 13 and 14 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
-  * LLVM 13 and 14 from Homebrew on macOS.
+  * LLVM 14 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
+  * LLVM 14 from Homebrew on macOS.
 
 ## Usage
 
