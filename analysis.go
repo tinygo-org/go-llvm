@@ -13,7 +13,7 @@
 package llvm
 
 /*
-#include "llvm-c/Analysis.h" // If you are getting an error here read bindings/go/README.txt
+#include "llvm-c/Analysis.h" // If you are getting an error here you need to build or install LLVM, see https://tinygo.org/docs/guides/build/
 #include "llvm-c/Core.h"
 #include <stdlib.h>
 */
