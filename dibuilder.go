@@ -606,7 +606,7 @@ func (d *DIBuilder) CreateExpression(addr []uint64) Metadata {
 	if len(addr) > 0 {
 		data = (*C.uint64_t)(unsafe.Pointer(&addr[0]))
 	}
-	result := C.LLVMGoDIBuilderCreateExpression(d.ref, data, C.size_t(len(addr)))
+	result := C.LLVMDIBuilderCreateExpression(d.ref, data, C.size_t(len(addr)))
 	return Metadata{C: result}
 }
 

@@ -6,17 +6,6 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  test-macos-llvm-13:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install LLVM
-        run: |
-          brew install llvm@13
-      - name: Test LLVM 13
-        run:
-          go test -v -tags=llvm13
   test-macos-llvm-14:
     runs-on: macos-latest
     steps:
@@ -49,17 +38,3 @@ jobs:
       - name: Test default LLVM
         run:
           go test -v
-  test-linux-llvm-13:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install LLVM
-        run: |
-          echo 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main' | sudo tee /etc/apt/sources.list.d/llvm.list
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends llvm-13-dev
-      - name: Test LLVM 13
-        run:
-          go test -v -tags=llvm13
