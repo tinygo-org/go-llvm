@@ -389,6 +389,11 @@ func (c Context) CreateEnumAttribute(kind uint, val uint64) (a Attribute) {
 	return
 }
 
+func (c Context) CreateTypeAttribute(kind uint, t Type) (a Attribute) {
+	a.C = C.LLVMCreateTypeAttribute(c.C, C.unsigned(kind), t.C)
+	return
+}
+
 func (a Attribute) GetEnumKind() (id int) {
 	id = int(C.LLVMGetEnumAttributeKind(a.C))
 	return
