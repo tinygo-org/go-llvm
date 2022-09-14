@@ -394,6 +394,11 @@ func (c Context) CreateTypeAttribute(kind uint, t Type) (a Attribute) {
 	return
 }
 
+func (a Attribute) GetTypeValue() (t Type) {
+	t.C = C.LLVMGetTypeAttributeValue(a.C)
+	return
+}
+
 func (a Attribute) GetEnumKind() (id int) {
 	id = int(C.LLVMGetEnumAttributeKind(a.C))
 	return
