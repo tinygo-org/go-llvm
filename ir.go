@@ -1370,7 +1370,6 @@ func (v Value) Indices() []uint32 {
 func (v Value) IntPredicate() IntPredicate     { return IntPredicate(C.LLVMGetICmpPredicate(v.C)) }
 func (v Value) FloatPredicate() FloatPredicate { return FloatPredicate(C.LLVMGetFCmpPredicate(v.C)) }
 
-
 //-------------------------------------------------------------------------
 // llvm.Builder
 //-------------------------------------------------------------------------
@@ -1679,10 +1678,10 @@ func (b Builder) CreateFree(p Value) (v Value) {
 	v.C = C.LLVMBuildFree(b.C, p.C)
 	return
 }
-func (b Builder) CreateLoad(p Value, name string) (v Value) {
+func (b Builder) CreateLoad(t Type, p Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	v.C = C.LLVMBuildLoad(b.C, p.C, cname)
+	v.C = C.LLVMBuildLoad2(b.C, t.C, p.C, cname)
 	return
 }
 func (b Builder) CreateStore(val Value, p Value) (v Value) {
