@@ -1115,10 +1115,10 @@ func (v Value) SetCmpXchgFailureOrdering(ordering AtomicOrdering) {
 }
 
 // Operations on aliases
-func AddAlias(m Module, t Type, aliasee Value, name string) (v Value) {
+func AddAlias(m Module, t Type, addressSpace int, aliasee Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	v.C = C.LLVMAddAlias(m.C, t.C, aliasee.C, cname)
+	v.C = C.LLVMAddAlias2(m.C, t.C, C.unsigned(addressSpace), aliasee.C, cname)
 	return
 }
 
@@ -1445,11 +1445,11 @@ func (b Builder) CreateIndirectBr(addr Value, numDests int) (rv Value) {
 	rv.C = C.LLVMBuildIndirectBr(b.C, addr.C, C.unsigned(numDests))
 	return
 }
-func (b Builder) CreateInvoke(fn Value, args []Value, then, catch BasicBlock, name string) (rv Value) {
+func (b Builder) CreateInvoke(t Type, fn Value, args []Value, then, catch BasicBlock, name string) (rv Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	ptr, nvals := llvmValueRefs(args)
-	rv.C = C.LLVMBuildInvoke(b.C, fn.C, ptr, nvals, then.C, catch.C, cname)
+	rv.C = C.LLVMBuildInvoke2(b.C, t.C, fn.C, ptr, nvals, then.C, catch.C, cname)
 	return
 }
 func (b Builder) CreateUnreachable() (rv Value) { rv.C = C.LLVMBuildUnreachable(b.C); return }
@@ -1702,10 +1702,10 @@ func (b Builder) CreateInBoundsGEP(p Value, indices []Value, name string) (v Val
 	v.C = C.LLVMBuildInBoundsGEP(b.C, p.C, ptr, nvals, cname)
 	return
 }
-func (b Builder) CreateStructGEP(p Value, i int, name string) (v Value) {
+func (b Builder) CreateStructGEP(t Type, p Value, i int, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	v.C = C.LLVMBuildStructGEP(b.C, p.C, C.unsigned(i), cname)
+	v.C = C.LLVMBuildStructGEP2(b.C, t.C, p.C, C.unsigned(i), cname)
 	return
 }
 func (b Builder) CreateGlobalString(str, name string) (v Value) {
@@ -1934,10 +1934,10 @@ func (b Builder) CreateIsNotNull(val Value, name string) (v Value) {
 	v.C = C.LLVMBuildIsNotNull(b.C, val.C, cname)
 	return
 }
-func (b Builder) CreatePtrDiff(lhs, rhs Value, name string) (v Value) {
+func (b Builder) CreatePtrDiff(t Type, lhs, rhs Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
-	v.C = C.LLVMBuildPtrDiff(b.C, lhs.C, rhs.C, cname)
+	v.C = C.LLVMBuildPtrDiff2(b.C, t.C, lhs.C, rhs.C, cname)
 	return
 }
 
