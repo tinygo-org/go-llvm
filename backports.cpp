@@ -7,7 +7,6 @@
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Transforms/IPO.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
-#include "llvm/Transforms/Coroutines.h"
 #include "llvm-c/DebugInfo.h"
 
 void LLVMGlobalObjectAddMetadata(LLVMValueRef Global, unsigned KindID, LLVMMetadataRef MD) {

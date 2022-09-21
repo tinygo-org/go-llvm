@@ -18,6 +18,18 @@ jobs:
       - name: Test LLVM 14
         run:
           go test -v -tags=llvm14
+  test-macos-llvm-15:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          brew update
+          brew install llvm@15
+      - name: Test LLVM 15
+        run:
+          go test -v -tags=llvm15
       - name: Test default LLVM
         run:
           go test -v
@@ -35,6 +47,20 @@ jobs:
       - name: Test LLVM 14
         run:
           go test -v -tags=llvm14
+  test-linux-llvm-15:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install LLVM
+        run: |
+          echo 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends llvm-15-dev
+      - name: Test LLVM 15
+        run:
+          go test -v -tags=llvm15
       - name: Test default LLVM
         run:
           go test -v
