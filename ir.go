@@ -956,14 +956,14 @@ func ConstShl(lhs, rhs Value) (v Value)  { v.C = C.LLVMConstShl(lhs.C, rhs.C); r
 func ConstLShr(lhs, rhs Value) (v Value) { v.C = C.LLVMConstLShr(lhs.C, rhs.C); return }
 func ConstAShr(lhs, rhs Value) (v Value) { v.C = C.LLVMConstAShr(lhs.C, rhs.C); return }
 
-func ConstGEP(v Value, indices []Value) (rv Value) {
+func ConstGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
-	rv.C = C.LLVMConstGEP(v.C, ptr, nvals)
+	rv.C = C.LLVMConstGEP2(t.C, v.C, ptr, nvals)
 	return
 }
-func ConstInBoundsGEP(v Value, indices []Value) (rv Value) {
+func ConstInBoundsGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
-	rv.C = C.LLVMConstInBoundsGEP(v.C, ptr, nvals)
+	rv.C = C.LLVMConstInBoundsGEP2(t.C, v.C, ptr, nvals)
 	return
 }
 func ConstTrunc(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstTrunc(v.C, t.C); return }
@@ -1688,18 +1688,18 @@ func (b Builder) CreateStore(val Value, p Value) (v Value) {
 	v.C = C.LLVMBuildStore(b.C, val.C, p.C)
 	return
 }
-func (b Builder) CreateGEP(p Value, indices []Value, name string) (v Value) {
+func (b Builder) CreateGEP(t Type, p Value, indices []Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	ptr, nvals := llvmValueRefs(indices)
-	v.C = C.LLVMBuildGEP(b.C, p.C, ptr, nvals, cname)
+	v.C = C.LLVMBuildGEP2(b.C, t.C, p.C, ptr, nvals, cname)
 	return
 }
-func (b Builder) CreateInBoundsGEP(p Value, indices []Value, name string) (v Value) {
+func (b Builder) CreateInBoundsGEP(t Type, p Value, indices []Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	ptr, nvals := llvmValueRefs(indices)
-	v.C = C.LLVMBuildInBoundsGEP(b.C, p.C, ptr, nvals, cname)
+	v.C = C.LLVMBuildInBoundsGEP2(b.C, t.C, p.C, ptr, nvals, cname)
 	return
 }
 func (b Builder) CreateStructGEP(t Type, p Value, i int, name string) (v Value) {
