@@ -1370,6 +1370,12 @@ func (v Value) Indices() []uint32 {
 func (v Value) IntPredicate() IntPredicate     { return IntPredicate(C.LLVMGetICmpPredicate(v.C)) }
 func (v Value) FloatPredicate() FloatPredicate { return FloatPredicate(C.LLVMGetFCmpPredicate(v.C)) }
 
+// Operations on GEPs
+func (v Value) GEPSourceElementType() (t Type) { t.C = C.LLVMGetGEPSourceElementType(v.C); return }
+
+// Operations on allocas
+func (v Value) AllocatedType() (t Type) { t.C = C.LLVMGetAllocatedType(v.C); return }
+
 //-------------------------------------------------------------------------
 // llvm.Builder
 //-------------------------------------------------------------------------
