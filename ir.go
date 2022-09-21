@@ -1058,6 +1058,7 @@ func (v Value) SetVisibility(vi Visibility) { C.LLVMSetVisibility(v.C, C.LLVMVis
 func (v Value) Alignment() int              { return int(C.LLVMGetAlignment(v.C)) }
 func (v Value) SetAlignment(a int)          { C.LLVMSetAlignment(v.C, C.unsigned(a)) }
 func (v Value) SetUnnamedAddr(ua bool)      { C.LLVMSetUnnamedAddr(v.C, boolToLLVMBool(ua)) }
+func (v Value) GlobalValueType() (t Type)   { t.C = C.LLVMGlobalGetValueType(v.C); return }
 
 // Operations on global variables
 func AddGlobal(m Module, t Type, name string) (v Value) {
@@ -1318,6 +1319,10 @@ func (v Value) CalledValue() (rv Value) {
 	rv.C = C.LLVMGetCalledValue(v.C)
 	return
 }
+func (v Value) CalledFunctionType() (t Type) {
+	t.C = C.LLVMGetCalledFunctionType(v.C)
+	return
+}
 
 // Operations on call instructions (only)
 func (v Value) IsTailCall() bool    { return C.LLVMIsTailCall(v.C) != 0 }
@@ -1364,6 +1369,7 @@ func (v Value) Indices() []uint32 {
 // Operations on comparisons
 func (v Value) IntPredicate() IntPredicate     { return IntPredicate(C.LLVMGetICmpPredicate(v.C)) }
 func (v Value) FloatPredicate() FloatPredicate { return FloatPredicate(C.LLVMGetFCmpPredicate(v.C)) }
+
 
 //-------------------------------------------------------------------------
 // llvm.Builder
@@ -1412,11 +1418,11 @@ func (b Builder) GetCurrentDebugLocation() (loc DebugLoc) {
 func (b Builder) SetInstDebugLocation(v Value) { C.LLVMSetInstDebugLocation(b.C, v.C) }
 func (b Builder) InsertDeclare(module Module, storage Value, md Value) Value {
 	f := module.NamedFunction("llvm.dbg.declare")
+	ftyp := FunctionType(VoidType(), []Type{storage.Type(), md.Type()}, false)
 	if f.IsNil() {
-		ftyp := FunctionType(VoidType(), []Type{storage.Type(), md.Type()}, false)
 		f = AddFunction(module, "llvm.dbg.declare", ftyp)
 	}
-	return b.CreateCall(f, []Value{storage, md}, "")
+	return b.CreateCall(ftyp, f, []Value{storage, md}, "")
 }
 
 // Terminators
@@ -1865,11 +1871,11 @@ func (b Builder) CreatePHI(t Type, name string) (v Value) {
 	v.C = C.LLVMBuildPhi(b.C, t.C, cname)
 	return
 }
-func (b Builder) CreateCall(fn Value, args []Value, name string) (v Value) {
+func (b Builder) CreateCall(t Type, fn Value, args []Value, name string) (v Value) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	ptr, nvals := llvmValueRefs(args)
-	v.C = C.LLVMBuildCall(b.C, fn.C, ptr, nvals, cname)
+	v.C = C.LLVMBuildCall2(b.C, t.C, fn.C, ptr, nvals, cname)
 	return
 }
 

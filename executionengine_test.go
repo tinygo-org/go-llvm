@@ -48,7 +48,7 @@ func TestFactorial(t *testing.T) {
 	builder.SetInsertPointAtEnd(iffalse)
 	n_minus := builder.CreateSub(n, ConstInt(Int32Type(), 1, false), "subtmp")
 	call_fac_args := []Value{n_minus}
-	call_fac := builder.CreateCall(fac, call_fac_args, "calltmp")
+	call_fac := builder.CreateCall(fac_type, fac, call_fac_args, "calltmp")
 	res_iffalse := builder.CreateMul(n, call_fac, "multmp")
 	builder.CreateBr(end)
 
