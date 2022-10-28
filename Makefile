@@ -18,7 +18,6 @@ LDFLAGS = $(shell $(CONFIG) --ldflags --libs --system-libs $(COMPONENTS))
 ifeq ($(BUILDDIR),)
 	ifeq ($(UNAME_S),Darwin)
 	CONFIG = /usr/local/Cellar/llvm/$(VERSION)/bin/llvm-config
-	LDFLAGS += -L/usr/local/opt/libffi/lib -lffi
 	else
 	CONFIG = llvm-config-$(VERSION_MAJOR)
 	endif
