@@ -1180,6 +1180,40 @@ func (v Value) AddTargetDependentFunctionAttr(attr, value string) {
 func (v Value) SetPersonality(p Value) {
 	C.LLVMSetPersonalityFn(v.C, p.C)
 }
+func IntrinsicID(name string) (id uint) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	id = uint(C.LLVMLookupIntrinsicID(cname, C.size_t(len(name))))
+	return
+}
+func IsIntrinsicOverloaded(id uint) bool {
+	return C.LLVMIntrinsicIsOverloaded(C.unsigned(id)) != 0
+}
+func IntrinsicName(id uint) string {
+	length := C.size_t(0)
+	cname := C.LLVMIntrinsicGetName(C.unsigned(id), &length)
+	return C.GoStringN(cname, C.int(length))
+}
+func (c Context) IntrinsicType(id uint, paramTypes []Type) (t Type) {
+	t.C = C.LLVMIntrinsicGetType(c.C, C.unsigned(id), llvmTypeRefPtr(&paramTypes[0]), C.size_t(len(paramTypes)))
+	return
+}
+func (c Module) InsertIntrinsic(id uint, paramTypes []Type) (v Value) {
+	var pt *C.LLVMTypeRef
+	if paramTypes == nil {
+		pt = nil
+	} else {
+		pt = llvmTypeRefPtr(&paramTypes[0])
+	}
+	v.C = C.LLVMGetIntrinsicDeclaration(c.C, C.unsigned(id), pt, C.size_t(len(paramTypes)))
+	return
+}
+func (c Module) CopyOverloadedName(id uint, paramTypes []Type) string {
+	lenght := C.size_t(0)
+	cname := C.LLVMIntrinsicCopyOverloadedName2(c.C, C.unsigned(id), llvmTypeRefPtr(&paramTypes[0]), C.size_t(len(paramTypes)), &lenght)
+	defer C.free(unsafe.Pointer(cname))
+	return C.GoStringN(cname, C.int(lenght))
+}
 
 // Operations on parameters
 func (v Value) ParamsCount() int { return int(C.LLVMCountParams(v.C)) }
