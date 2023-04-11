@@ -500,7 +500,7 @@ func (m Module) Dump() {
 
 func (m Module) String() string {
 	cir := C.LLVMPrintModuleToString(m.C)
-	defer C.free(unsafe.Pointer(cir))
+	defer C.LLVMDisposeMessage(cir)
 	ir := C.GoString(cir)
 	return ir
 }
