@@ -13,6 +13,7 @@
 package llvm
 
 /*
+#include "llvm-c/Core.h"
 #include "llvm-c/IRReader.h"
 #include <stdlib.h>
 */
@@ -20,7 +21,6 @@ import "C"
 
 import (
 	"errors"
-	"unsafe"
 )
 
 // ParseIR parses the textual IR given in the memory buffer and returns a new
@@ -30,7 +30,7 @@ func (c *Context) ParseIR(buf MemoryBuffer) (Module, error) {
 	var errmsg *C.char
 	if C.LLVMParseIRInContext(c.C, buf.C, &m.C, &errmsg) != 0 {
 		err := errors.New(C.GoString(errmsg))
-		C.free(unsafe.Pointer(errmsg))
+		C.LLVMDisposeMessage(errmsg)
 		return Module{}, err
 	}
 	return m, nil
