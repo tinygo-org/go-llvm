@@ -4,8 +4,8 @@ This library provides bindings to a system-installed LLVM.
 
 Currently supported:
 
-  * LLVM 15 and 14 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
-  * LLVM 15 and 14 from Homebrew on macOS.
+  * LLVM 16, 15 and 14 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
+  * LLVM 16, 15 and 14 from Homebrew on macOS.
   * LLVM 15 with a manually built LLVM through the `byollvm` build tag. You
     need to set up `CFLAGS`/`LDFLAGS` etc yourself in this case.
 
