@@ -18,29 +18,10 @@ If you have a supported LLVM installation, you should be able to do a simple `go
 
     go get tinygo.org/x/go-llvm
 
-After downloading, you may have to update the configuration for your system:
-
-    make config
-
-If you built your own LLVM, you can also use that:
-
-    # update LLVM files
-    make update SRCDIR=<dir>
-    
-    # configure this LLVM build
-    make config BUILDDIR=<builddir>
-
-Note that you may have to comment out parts of `backports.go` if you use a
-newer version of LLVM.
+You can use build tags to select a LLVM version. For example, use `-tags=llvm15` to select LLVM 15. Setting a build tag for a LLVM version that is not supported will be ignored.
 
 ## License
 
-Most of the files are extracted from the LLVM source tree, specifically all
-\*.go, \*.cpp, and \*.h files come directly from
-[bindings/go/llvm](https://github.com/llvm-mirror/llvm/tree/release_80/bindings/go/llvm)
-in the LLVM source tree. They are all released under the [Apache License 2.0
-(with LLVM exceptions)](http://releases.llvm.org/9.0.0/LICENSE.TXT). Check
-upstream LLVM for detailed copyright information.
+These LLVM bindings for Go originally come from LLVM, but they have since been [removed](https://discourse.llvm.org/t/rfc-remove-the-go-bindings/65725). Still, they remain under the same license as they were originally, which is the [Apache License 2.0 (with LLVM exceptions)](http://releases.llvm.org/9.0.0/LICENSE.TXT). Check upstream LLVM for detailed copyright information.
 
-This README, the backports\* files, and the Makefile are separate from LLVM but
-are licensed under the same license.
+This README, the backports\* files, and the Makefile are separate from LLVM but are licensed under the same license.
