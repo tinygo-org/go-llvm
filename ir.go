@@ -19,8 +19,10 @@ package llvm
 #include <stdlib.h>
 */
 import "C"
-import "unsafe"
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
 
 type (
 	// We use these weird structs here because *Ref types are pointers and
@@ -908,6 +910,18 @@ func ConstVector(scalarConstVals []Value, packed bool) (v Value) {
 	ptr, nvals := llvmValueRefs(scalarConstVals)
 	v.C = C.LLVMConstVector(ptr, nvals)
 	return
+}
+
+// IsConstantString checks if the constant is an array of i8.
+func (v Value) IsConstantString() bool {
+	return C.LLVMIsConstantString(v.C) != 0
+}
+
+// ConstGetAsString will return the string contained in a constant.
+func (v Value) ConstGetAsString() string {
+	length := C.ulong(0)
+	cstr := C.LLVMGetAsString(v.C, &length)
+	return C.GoStringN(cstr, C.int(length))
 }
 
 // Constant expressions
