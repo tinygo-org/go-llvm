@@ -19,8 +19,10 @@ package llvm
 #include <stdlib.h>
 */
 import "C"
-import "unsafe"
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
 
 type (
 	// We use these weird structs here because *Ref types are pointers and
@@ -700,8 +702,23 @@ func VectorType(elementType Type, elementCount int) (t Type) {
 	return
 }
 
-func (t Type) IsPointerOpaque() bool    { return C.LLVMPointerTypeIsOpaque(t.C) != 0 }
-func (t Type) ElementType() (rt Type)   { rt.C = C.LLVMGetElementType(t.C); return }
+// IsPointerOpaque checks if the pointer is an opaque pointer.
+//
+// see llvm::Type::isOpaquePointerTy()
+func (t Type) IsPointerOpaque() bool { return C.LLVMPointerTypeIsOpaque(t.C) != 0 }
+
+// ElementType returns the type of the element for arrays, pointers and vectors.
+//
+// see llvm::SequentialType::getElementType()
+func (t Type) ElementType() (rt Type) {
+	if t.IsPointerOpaque() {
+		// avoid segfault
+		return Type{}
+	}
+	rt.C = C.LLVMGetElementType(t.C)
+	return
+}
+
 func (t Type) ArrayLength() int         { return int(C.LLVMGetArrayLength(t.C)) }
 func (t Type) PointerAddressSpace() int { return int(C.LLVMGetPointerAddressSpace(t.C)) }
 func (t Type) VectorSize() int          { return int(C.LLVMGetVectorSize(t.C)) }
