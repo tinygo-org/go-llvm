@@ -711,10 +711,6 @@ func (t Type) IsPointerOpaque() bool { return C.LLVMPointerTypeIsOpaque(t.C) != 
 //
 // see llvm::SequentialType::getElementType()
 func (t Type) ElementType() (rt Type) {
-	if t.IsPointerOpaque() {
-		// avoid segfault
-		return Type{}
-	}
 	rt.C = C.LLVMGetElementType(t.C)
 	return
 }
