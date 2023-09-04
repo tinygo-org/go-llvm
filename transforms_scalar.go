@@ -1,3 +1,6 @@
+//go:build !llvm17
+// +build !llvm17
+
 //===- transforms_scalar.go - Bindings for scalaropts ---------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.

@@ -1,5 +1,5 @@
-//go:build !llvm17
-// +build !llvm17
+//go:build llvm17
+// +build llvm17
 
 //===- executionengine_test.go - Tests for executionengine ----------------===//
 //
@@ -83,11 +83,6 @@ func TestFactorial(t *testing.T) {
 	pass := NewPassManager()
 	defer pass.Dispose()
 
-	pass.AddSCCPPass()
-	pass.AddInstructionCombiningPass()
-	pass.AddPromoteMemoryToRegisterPass()
-	pass.AddGVNPass()
-	pass.AddCFGSimplificationPass()
 	pass.Run(mod)
 
 	exec_args := []GenericValue{NewGenericValueFromInt(Int32Type(), 10, false)}

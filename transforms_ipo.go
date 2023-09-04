@@ -1,3 +1,6 @@
+//go:build !llvm17
+// +build !llvm17
+
 //===- transforms_ipo.go - Bindings for ipo -------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.

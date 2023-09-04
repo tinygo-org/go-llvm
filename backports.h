@@ -1,7 +1,6 @@
 
 #include "llvm-c/DebugInfo.h"
 #include "llvm-c/Types.h"
-#include "llvm-c/Transforms/PassManagerBuilder.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -19,8 +19,10 @@ package llvm
 #include <stdlib.h>
 */
 import "C"
-import "unsafe"
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
 
 type (
 	// We use these weird structs here because *Ref types are pointers and
@@ -985,10 +987,6 @@ func ConstIntCast(v Value, t Type, signed bool) (rv Value) {
 	return
 }
 func ConstFPCast(v Value, t Type) (rv Value) { rv.C = C.LLVMConstFPCast(v.C, t.C); return }
-func ConstSelect(cond, iftrue, iffalse Value) (rv Value) {
-	rv.C = C.LLVMConstSelect(cond.C, iftrue.C, iffalse.C)
-	return
-}
 func ConstExtractElement(vec, i Value) (rv Value) {
 	rv.C = C.LLVMConstExtractElement(vec.C, i.C)
 	return
