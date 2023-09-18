@@ -19,10 +19,11 @@ import (
 )
 
 func testAttribute(t *testing.T, name string) {
-	mod := NewModule("")
+	ctx := NewContext()
+	mod := ctx.NewModule("")
 	defer mod.Dispose()
 
-	ftyp := FunctionType(VoidType(), nil, false)
+	ftyp := FunctionType(ctx.VoidType(), nil, false)
 	fn := AddFunction(mod, "foo", ftyp)
 
 	kind := AttributeKindID(name)
@@ -104,10 +105,9 @@ func TestAttributes(t *testing.T) {
 }
 
 func TestDebugLoc(t *testing.T) {
-	mod := NewModule("")
+	ctx := NewContext()
+	mod := ctx.NewModule("")
 	defer mod.Dispose()
-
-	ctx := mod.Context()
 
 	b := ctx.NewBuilder()
 	defer b.Dispose()

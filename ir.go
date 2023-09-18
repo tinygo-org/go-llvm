@@ -448,13 +448,6 @@ func (a Attribute) IsString() bool {
 
 // Create and destroy modules.
 // See llvm::Module::Module.
-func NewModule(name string) (m Module) {
-	cname := C.CString(name)
-	defer C.free(unsafe.Pointer(cname))
-	m.C = C.LLVMModuleCreateWithName(cname)
-	return
-}
-
 func (c Context) NewModule(name string) (m Module) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
@@ -563,17 +556,6 @@ func (c Context) IntType(numbits int) (t Type) {
 	return
 }
 
-func Int1Type() (t Type)  { t.C = C.LLVMInt1Type(); return }
-func Int8Type() (t Type)  { t.C = C.LLVMInt8Type(); return }
-func Int16Type() (t Type) { t.C = C.LLVMInt16Type(); return }
-func Int32Type() (t Type) { t.C = C.LLVMInt32Type(); return }
-func Int64Type() (t Type) { t.C = C.LLVMInt64Type(); return }
-
-func IntType(numbits int) (t Type) {
-	t.C = C.LLVMIntType(C.unsigned(numbits))
-	return
-}
-
 func (t Type) IntTypeWidth() int {
 	return int(C.LLVMGetIntTypeWidth(t.C))
 }
@@ -584,12 +566,6 @@ func (c Context) DoubleType() (t Type)   { t.C = C.LLVMDoubleTypeInContext(c.C);
 func (c Context) X86FP80Type() (t Type)  { t.C = C.LLVMX86FP80TypeInContext(c.C); return }
 func (c Context) FP128Type() (t Type)    { t.C = C.LLVMFP128TypeInContext(c.C); return }
 func (c Context) PPCFP128Type() (t Type) { t.C = C.LLVMPPCFP128TypeInContext(c.C); return }
-
-func FloatType() (t Type)    { t.C = C.LLVMFloatType(); return }
-func DoubleType() (t Type)   { t.C = C.LLVMDoubleType(); return }
-func X86FP80Type() (t Type)  { t.C = C.LLVMX86FP80Type(); return }
-func FP128Type() (t Type)    { t.C = C.LLVMFP128Type(); return }
-func PPCFP128Type() (t Type) { t.C = C.LLVMPPCFP128Type(); return }
 
 // Operations on function types
 func FunctionType(returnType Type, paramTypes []Type, isVarArg bool) (t Type) {
@@ -705,9 +681,6 @@ func (t Type) VectorSize() int          { return int(C.LLVMGetVectorSize(t.C)) }
 func (c Context) VoidType() (t Type)  { t.C = C.LLVMVoidTypeInContext(c.C); return }
 func (c Context) LabelType() (t Type) { t.C = C.LLVMLabelTypeInContext(c.C); return }
 func (c Context) TokenType() (t Type) { t.C = C.LLVMTokenTypeInContext(c.C); return }
-
-func VoidType() (t Type)  { t.C = C.LLVMVoidType(); return }
-func LabelType() (t Type) { t.C = C.LLVMLabelType(); return }
 
 //-------------------------------------------------------------------------
 // llvm.Value
@@ -1363,7 +1336,6 @@ func (v Value) AllocatedType() (t Type) { t.C = C.LLVMGetAllocatedType(v.C); ret
 // exclusive means of building instructions using the C interface.
 
 func (c Context) NewBuilder() (b Builder) { b.C = C.LLVMCreateBuilderInContext(c.C); return }
-func NewBuilder() (b Builder)             { b.C = C.LLVMCreateBuilder(); return }
 func (b Builder) SetInsertPoint(block BasicBlock, instr Value) {
 	C.LLVMPositionBuilder(b.C, block.C, instr.C)
 }
@@ -1402,7 +1374,7 @@ func (b Builder) GetCurrentDebugLocation() (loc DebugLoc) {
 func (b Builder) SetInstDebugLocation(v Value) { C.LLVMSetInstDebugLocation(b.C, v.C) }
 func (b Builder) InsertDeclare(module Module, storage Value, md Value) Value {
 	f := module.NamedFunction("llvm.dbg.declare")
-	ftyp := FunctionType(VoidType(), []Type{storage.Type(), md.Type()}, false)
+	ftyp := FunctionType(module.Context().VoidType(), []Type{storage.Type(), md.Type()}, false)
 	if f.IsNil() {
 		f = AddFunction(module, "llvm.dbg.declare", ftyp)
 	}
