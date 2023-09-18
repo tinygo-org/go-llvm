@@ -30,9 +30,6 @@ jobs:
       - name: Test LLVM 15
         run:
           go test -v -tags=llvm15
-      - name: Test default LLVM
-        run:
-          go test -v
   test-macos-llvm-16:
     runs-on: macos-latest
     steps:
@@ -45,6 +42,9 @@ jobs:
       - name: Test LLVM 16
         run:
           go test -v -tags=llvm16
+      - name: Test default LLVM
+        run:
+          go test -v
   test-linux-llvm-14:
     runs-on: ubuntu-20.04
     steps:
@@ -73,9 +73,6 @@ jobs:
       - name: Test LLVM 15
         run:
           go test -v -tags=llvm15
-      - name: Test default LLVM
-        run:
-          go test -v
   test-linux-llvm-16:
     runs-on: ubuntu-20.04
     steps:
@@ -90,3 +87,6 @@ jobs:
       - name: Test LLVM 16
         run:
           go test -v -tags=llvm16
+      - name: Test default LLVM
+        run:
+          go test -v
