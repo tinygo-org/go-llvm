@@ -919,7 +919,7 @@ func (v Value) IsConstantString() bool {
 
 // ConstGetAsString will return the string contained in a constant.
 func (v Value) ConstGetAsString() string {
-	length := C.ulong(0)
+	length := C.size_t(0)
 	cstr := C.LLVMGetAsString(v.C, &length)
 	return C.GoStringN(cstr, C.int(length))
 }
