@@ -705,6 +705,14 @@ func (v Value) SetMetadata(kind int, node Metadata) {
 	C.LLVMSetMetadata2(v.C, C.unsigned(kind), node.C)
 }
 
+// Obtain the string value of the instruction. Same as would be printed with
+// Value.Dump() (with two spaces at the start but no newline at the end).
+func (v Value) String() string {
+	cstr := C.LLVMPrintValueToString(v.C)
+	defer C.LLVMDisposeMessage(cstr)
+	return C.GoString(cstr)
+}
+
 // Conversion functions.
 // Return the input value if it is an instance of the specified class, otherwise NULL.
 // See llvm::dyn_cast_or_null<>.
