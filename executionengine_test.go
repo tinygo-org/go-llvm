@@ -78,16 +78,6 @@ func TestFactorial(t *testing.T) {
 	}
 	defer engine.Dispose()
 
-	pass := NewPassManager()
-	defer pass.Dispose()
-
-	pass.AddSCCPPass()
-	pass.AddInstructionCombiningPass()
-	pass.AddPromoteMemoryToRegisterPass()
-	pass.AddGVNPass()
-	pass.AddCFGSimplificationPass()
-	pass.Run(mod)
-
 	exec_args := []GenericValue{NewGenericValueFromInt(ctx.Int32Type(), 10, false)}
 	exec_res := engine.RunFunction(fac, exec_args)
 	var fac10 uint64 = 10 * 9 * 8 * 7 * 6 * 5 * 4 * 3 * 2 * 1
