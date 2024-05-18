@@ -923,8 +923,6 @@ func ConstNUWSub(lhs, rhs Value) (v Value) { v.C = C.LLVMConstNUWSub(lhs.C, rhs.
 func ConstMul(lhs, rhs Value) (v Value)    { v.C = C.LLVMConstMul(lhs.C, rhs.C); return }
 func ConstNSWMul(lhs, rhs Value) (v Value) { v.C = C.LLVMConstNSWMul(lhs.C, rhs.C); return }
 func ConstNUWMul(lhs, rhs Value) (v Value) { v.C = C.LLVMConstNUWMul(lhs.C, rhs.C); return }
-func ConstAnd(lhs, rhs Value) (v Value)    { v.C = C.LLVMConstAnd(lhs.C, rhs.C); return }
-func ConstOr(lhs, rhs Value) (v Value)     { v.C = C.LLVMConstOr(lhs.C, rhs.C); return }
 func ConstXor(lhs, rhs Value) (v Value)    { v.C = C.LLVMConstXor(lhs.C, rhs.C); return }
 
 func ConstICmp(pred IntPredicate, lhs, rhs Value) (v Value) {
@@ -937,8 +935,6 @@ func ConstFCmp(pred FloatPredicate, lhs, rhs Value) (v Value) {
 }
 
 func ConstShl(lhs, rhs Value) (v Value)  { v.C = C.LLVMConstShl(lhs.C, rhs.C); return }
-func ConstLShr(lhs, rhs Value) (v Value) { v.C = C.LLVMConstLShr(lhs.C, rhs.C); return }
-func ConstAShr(lhs, rhs Value) (v Value) { v.C = C.LLVMConstAShr(lhs.C, rhs.C); return }
 
 func ConstGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
@@ -951,35 +947,14 @@ func ConstInBoundsGEP(t Type, v Value, indices []Value) (rv Value) {
 	return
 }
 func ConstTrunc(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstTrunc(v.C, t.C); return }
-func ConstSExt(v Value, t Type) (rv Value)     { rv.C = C.LLVMConstSExt(v.C, t.C); return }
-func ConstZExt(v Value, t Type) (rv Value)     { rv.C = C.LLVMConstZExt(v.C, t.C); return }
-func ConstFPTrunc(v Value, t Type) (rv Value)  { rv.C = C.LLVMConstFPTrunc(v.C, t.C); return }
-func ConstFPExt(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstFPExt(v.C, t.C); return }
-func ConstUIToFP(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstUIToFP(v.C, t.C); return }
-func ConstSIToFP(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstSIToFP(v.C, t.C); return }
-func ConstFPToUI(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstFPToUI(v.C, t.C); return }
-func ConstFPToSI(v Value, t Type) (rv Value)   { rv.C = C.LLVMConstFPToSI(v.C, t.C); return }
 func ConstPtrToInt(v Value, t Type) (rv Value) { rv.C = C.LLVMConstPtrToInt(v.C, t.C); return }
 func ConstIntToPtr(v Value, t Type) (rv Value) { rv.C = C.LLVMConstIntToPtr(v.C, t.C); return }
 func ConstBitCast(v Value, t Type) (rv Value)  { rv.C = C.LLVMConstBitCast(v.C, t.C); return }
-func ConstZExtOrBitCast(v Value, t Type) (rv Value) {
-	rv.C = C.LLVMConstZExtOrBitCast(v.C, t.C)
-	return
-}
-func ConstSExtOrBitCast(v Value, t Type) (rv Value) {
-	rv.C = C.LLVMConstSExtOrBitCast(v.C, t.C)
-	return
-}
 func ConstTruncOrBitCast(v Value, t Type) (rv Value) {
 	rv.C = C.LLVMConstTruncOrBitCast(v.C, t.C)
 	return
 }
 func ConstPointerCast(v Value, t Type) (rv Value) { rv.C = C.LLVMConstPointerCast(v.C, t.C); return }
-func ConstIntCast(v Value, t Type, signed bool) (rv Value) {
-	rv.C = C.LLVMConstIntCast(v.C, t.C, boolToLLVMBool(signed))
-	return
-}
-func ConstFPCast(v Value, t Type) (rv Value) { rv.C = C.LLVMConstFPCast(v.C, t.C); return }
 func ConstExtractElement(vec, i Value) (rv Value) {
 	rv.C = C.LLVMConstExtractElement(vec.C, i.C)
 	return
