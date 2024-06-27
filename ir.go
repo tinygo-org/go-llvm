@@ -1243,6 +1243,17 @@ func (v Value) InstructionCallConv() CallConv {
 func (v Value) AddCallSiteAttribute(i int, a Attribute) {
 	C.LLVMAddCallSiteAttribute(v.C, C.LLVMAttributeIndex(i), a.C)
 }
+func (v Value) GetCallSiteEnumAttribute(i int, kind uint) (a Attribute) {
+	a.C = C.LLVMGetCallSiteEnumAttribute(v.C, C.LLVMAttributeIndex(i), C.unsigned(kind))
+	return
+}
+func (v Value) GetCallSiteStringAttribute(i int, kind string) (a Attribute) {
+	ckind := C.CString(kind)
+	defer C.free(unsafe.Pointer(ckind))
+	a.C = C.LLVMGetCallSiteStringAttribute(v.C, C.LLVMAttributeIndex(i),
+		ckind, C.unsigned(len(kind)))
+	return
+}
 func (v Value) SetInstrParamAlignment(i int, align int) {
 	C.LLVMSetInstrParamAlignment(v.C, C.unsigned(i), C.unsigned(align))
 }
