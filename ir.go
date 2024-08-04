@@ -195,6 +195,15 @@ const (
 	ShuffleVector  Opcode = C.LLVMShuffleVector
 	ExtractValue   Opcode = C.LLVMExtractValue
 	InsertValue    Opcode = C.LLVMInsertValue
+
+	// Exception Handling Operators
+	Resume      Opcode = C.LLVMResume
+	LandingPad  Opcode = C.LLVMLandingPad
+	CleanupRet  Opcode = C.LLVMCleanupRet
+	CatchRet    Opcode = C.LLVMCatchRet
+	CatchPad    Opcode = C.LLVMCatchPad
+	CleanupPad  Opcode = C.LLVMCleanupPad
+	CatchSwitch Opcode = C.LLVMCatchSwitch
 )
 
 const (
@@ -934,7 +943,7 @@ func ConstFCmp(pred FloatPredicate, lhs, rhs Value) (v Value) {
 	return
 }
 
-func ConstShl(lhs, rhs Value) (v Value)  { v.C = C.LLVMConstShl(lhs.C, rhs.C); return }
+func ConstShl(lhs, rhs Value) (v Value) { v.C = C.LLVMConstShl(lhs.C, rhs.C); return }
 
 func ConstGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
@@ -1401,11 +1410,86 @@ func (b Builder) CreateInvoke(t Type, fn Value, args []Value, then, catch BasicB
 }
 func (b Builder) CreateUnreachable() (rv Value) { rv.C = C.LLVMBuildUnreachable(b.C); return }
 
+// Exception Handling
+
+func (b Builder) CreateResume(ex Value) (v Value) {
+	v.C = C.LLVMBuildResume(b.C, ex.C)
+	return
+}
+
+func (b Builder) CreateLandingPad(t Type, nclauses int, name string) (l Value) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	l.C = C.LLVMBuildLandingPad(b.C, t.C, nil, C.unsigned(nclauses), cname)
+	return l
+}
+
+func (b Builder) CreateCleanupRet(catchpad Value, bb BasicBlock) (v Value) {
+	v.C = C.LLVMBuildCleanupRet(b.C, catchpad.C, bb.C)
+	return
+}
+
+func (b Builder) CreateCatchRet(catchpad Value, bb BasicBlock) (v Value) {
+	v.C = C.LLVMBuildCatchRet(b.C, catchpad.C, bb.C)
+	return
+}
+
+func (b Builder) CreateCatchPad(parentPad Value, args []Value, name string) (v Value) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	ptr, nvals := llvmValueRefs(args)
+	v.C = C.LLVMBuildCatchPad(b.C, parentPad.C, ptr, nvals, cname)
+	return
+}
+
+func (b Builder) CreateCleanupPad(parentPad Value, args []Value, name string) (v Value) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	ptr, nvals := llvmValueRefs(args)
+	v.C = C.LLVMBuildCleanupPad(b.C, parentPad.C, ptr, nvals, cname)
+	return
+}
+func (b Builder) CreateCatchSwitch(parentPad Value, unwindBB BasicBlock, numHandlers int, name string) (v Value) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	v.C = C.LLVMBuildCatchSwitch(b.C, parentPad.C, unwindBB.C, C.unsigned(numHandlers), cname)
+	return
+}
+
 // Add a case to the switch instruction
 func (v Value) AddCase(on Value, dest BasicBlock) { C.LLVMAddCase(v.C, on.C, dest.C) }
 
 // Add a destination to the indirectbr instruction
 func (v Value) AddDest(dest BasicBlock) { C.LLVMAddDestination(v.C, dest.C) }
+
+// Add a destination to the catchswitch instruction.
+func (v Value) AddHandler(bb BasicBlock) { C.LLVMAddHandler(v.C, bb.C) }
+
+// Obtain the basic blocks acting as handlers for a catchswitch instruction.
+func (v Value) GetHandlers() []BasicBlock {
+	num := C.LLVMGetNumHandlers(v.C)
+	if num == 0 {
+		return nil
+	}
+	blocks := make([]BasicBlock, num)
+	C.LLVMGetHandlers(v.C, &blocks[0].C)
+	return blocks
+}
+
+// Get the parent catchswitch instruction of a catchpad instruction.
+//
+// This only works on catchpad instructions.
+func (v Value) GetParentCatchSwitch() (rv Value) {
+	rv.C = C.LLVMGetParentCatchSwitch(v.C)
+	return
+}
+
+// Set the parent catchswitch instruction of a catchpad instruction.
+//
+// This only works on llvm::CatchPadInst instructions.
+func (v Value) SetParentCatchSwitch(catchSwitch Value) {
+	C.LLVMSetParentCatchSwitch(v.C, catchSwitch.C)
+}
 
 // Arithmetic
 func (b Builder) CreateAdd(lhs, rhs Value, name string) (v Value) {
@@ -1888,24 +1972,12 @@ func (b Builder) CreatePtrDiff(t Type, lhs, rhs Value, name string) (v Value) {
 	return
 }
 
-func (b Builder) CreateLandingPad(t Type, nclauses int, name string) (l Value) {
-	cname := C.CString(name)
-	defer C.free(unsafe.Pointer(cname))
-	l.C = C.LLVMBuildLandingPad(b.C, t.C, nil, C.unsigned(nclauses), cname)
-	return l
-}
-
 func (l Value) AddClause(v Value) {
 	C.LLVMAddClause(l.C, v.C)
 }
 
 func (l Value) SetCleanup(cleanup bool) {
 	C.LLVMSetCleanup(l.C, boolToLLVMBool(cleanup))
-}
-
-func (b Builder) CreateResume(ex Value) (v Value) {
-	v.C = C.LLVMBuildResume(b.C, ex.C)
-	return
 }
 
 //-------------------------------------------------------------------------
