@@ -48,3 +48,16 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
 #endif
   return llvm::wrap(llvm::MemoryBuffer::getMemBufferCopy(OS.str()).release());
 }
+
+#if LLVM_VERSION_MAJOR < 15
+
+// This is backported because version 14 supports opaque
+// pointers but I presume if you try to access the element
+// type it will crash. So this backport prevents that by
+// allowing to check if the pointer is opaque before trying
+// to access the element type.
+LLVMBool LLVMPointerTypeIsOpaque(LLVMTypeRef Ty) {
+  return llvm::unwrap<llvm::Type>(Ty)->isOpaquePointerTy();
+}
+
+#endif

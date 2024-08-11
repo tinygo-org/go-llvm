@@ -16,6 +16,7 @@ package llvm
 #include "llvm-c/Core.h"
 #include "llvm-c/Comdat.h"
 #include "IRBindings.h"
+#include "backports.h"
 #include <stdlib.h>
 */
 import "C"
@@ -652,6 +653,7 @@ func (t Type) StructSetBody(elementTypes []Type, packed bool) {
 }
 
 func (t Type) IsStructPacked() bool         { return C.LLVMIsPackedStruct(t.C) != 0 }
+func (t Type) IsStructOpaque() bool         { return C.LLVMIsOpaqueStruct(t.C) != 0 }
 func (t Type) StructElementTypesCount() int { return int(C.LLVMCountStructElementTypes(t.C)) }
 func (t Type) StructElementTypes() []Type {
 	out := make([]Type, t.StructElementTypesCount())
@@ -663,7 +665,12 @@ func (t Type) StructElementTypes() []Type {
 
 // Operations on array, pointer, and vector types (sequence types)
 func (t Type) Subtypes() (ret []Type) {
-	ret = make([]Type, C.LLVMGetNumContainedTypes(t.C))
+	num := C.LLVMGetNumContainedTypes(t.C)
+	if num == 0 {
+		// prevent a crash at &ret[0] if there are no subtypes
+		return nil
+	}
+	ret = make([]Type, num)
 	C.LLVMGetSubtypes(t.C, llvmTypeRefPtr(&ret[0]))
 	return
 }
@@ -681,7 +688,19 @@ func VectorType(elementType Type, elementCount int) (t Type) {
 	return
 }
 
-func (t Type) ElementType() (rt Type)   { rt.C = C.LLVMGetElementType(t.C); return }
+// IsPointerOpaque checks if the pointer is an opaque pointer.
+//
+// see llvm::Type::isOpaquePointerTy()
+func (t Type) IsPointerOpaque() bool { return C.LLVMPointerTypeIsOpaque(t.C) != 0 }
+
+// ElementType returns the type of the element for arrays, pointers and vectors.
+//
+// see llvm::SequentialType::getElementType()
+func (t Type) ElementType() (rt Type) {
+	rt.C = C.LLVMGetElementType(t.C)
+	return
+}
+
 func (t Type) ArrayLength() int         { return int(C.LLVMGetArrayLength(t.C)) }
 func (t Type) PointerAddressSpace() int { return int(C.LLVMGetPointerAddressSpace(t.C)) }
 func (t Type) VectorSize() int          { return int(C.LLVMGetVectorSize(t.C)) }
