@@ -48,3 +48,17 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
 #endif
   return llvm::wrap(llvm::MemoryBuffer::getMemBufferCopy(OS.str()).release());
 }
+
+void LLVMGoDIBuilderInsertDbgValueRecordAtEnd(
+    LLVMDIBuilderRef Builder, LLVMValueRef Val, LLVMMetadataRef VarInfo,
+    LLVMMetadataRef Expr, LLVMMetadataRef DebugLoc, LLVMBasicBlockRef Block) {
+#if LLVM_VERSION_MAJOR >= 19
+  // Note: this returns a LLVMDbgRecordRef. Previously, InsertValueAtEnd would
+  // return a Value. But since the type changed, and I'd like to keep the API
+  // consistent across LLVM versions, I decided to drop the return value.
+  LLVMDIBuilderInsertDbgValueRecordAtEnd(Builder, Val, VarInfo, Expr, DebugLoc, Block);
+#else
+  // Old llvm.dbg.* API.
+  LLVMDIBuilderInsertDbgValueAtEnd(Builder, Val, VarInfo, Expr, DebugLoc, Block);
+#endif
+}

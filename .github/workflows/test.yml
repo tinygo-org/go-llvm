@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18]
+        llvm: [14, 15, 16, 17, 18, 19]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,14 +27,14 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 18
+        if: matrix.llvm == 19
         run:
           go test -v
   test-linux:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18]
+        llvm: [14, 15, 16, 17, 18, 19]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +52,6 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 18
+        if: matrix.llvm == 19
         run:
           go test -v

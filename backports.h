@@ -10,8 +10,9 @@ void LLVMGlobalObjectAddMetadata(LLVMValueRef objValue, unsigned KindID, LLVMMet
 
 LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M);
 
-LLVMMetadataRef LLVMGoDIBuilderCreateExpression(LLVMDIBuilderRef Builder,
-                                                uint64_t *Addr, size_t Length);
+void LLVMGoDIBuilderInsertDbgValueRecordAtEnd(
+    LLVMDIBuilderRef Builder, LLVMValueRef Val, LLVMMetadataRef VarInfo,
+    LLVMMetadataRef Expr, LLVMMetadataRef DebugLoc, LLVMBasicBlockRef Block);
 
 #ifdef __cplusplus
 }
