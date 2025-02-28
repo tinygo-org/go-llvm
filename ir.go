@@ -78,6 +78,7 @@ type (
 	FloatPredicate      C.LLVMRealPredicate
 	LandingPadClause    C.LLVMLandingPadClauseTy
 	InlineAsmDialect    C.LLVMInlineAsmDialect
+	Intrinsic           C.unsigned
 )
 
 func (c Context) IsNil() bool        { return c.C == nil }
@@ -2055,3 +2056,65 @@ func (pm PassManager) FinalizeFunc() bool { return C.LLVMFinalizeFunctionPassMan
 // the module provider.
 // See llvm::PassManagerBase::~PassManagerBase.
 func (pm PassManager) Dispose() { C.LLVMDisposePassManager(pm.C) }
+
+//-------------------------------------------------------------------------
+// llvm.Intrinsic
+//-------------------------------------------------------------------------
+
+// Obtain the intrinsic ID number which matches the given function name.
+// See llvm::Function::lookupIntrinsicID.
+func IntrinsicID(name string) (in Intrinsic) {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	in = Intrinsic(C.LLVMLookupIntrinsicID(cname, C.size_t(len(name))))
+	return
+}
+
+// Obtain if the intrinsic identified by the given ID is overloaded.
+// See llvm::Intrinsic::isOverloaded
+func (in Intrinsic) IsOverloaded() bool {
+	return C.LLVMIntrinsicIsOverloaded(C.unsigned(in)) != 0
+}
+
+// Retrieves the name of an intrinsic.
+// See llvm::Intrinsic::getName
+func (in Intrinsic) GetName() string {
+	length := C.size_t(0)
+	cname := C.LLVMIntrinsicGetName(C.unsigned(in), &length)
+	return C.GoStringN(cname, C.int(length))
+}
+
+// Retrieves the type of an intrinsic. For overloaded intrinsics, parameter types must be provided to uniquely identify an overload.
+// See llvm::Intrinsic::getType
+func (c Context) GetIntrinsicType(in Intrinsic, paramTypes []Type) (t Type) {
+	var pt *C.LLVMTypeRef
+	if paramTypes != nil {
+		pt = llvmTypeRefPtr(&paramTypes[0])
+	}
+	t.C = C.LLVMIntrinsicGetType(c.C, C.unsigned(in), pt, C.size_t(len(paramTypes)))
+	return
+}
+
+// Create or insert the declaration of an intrinsic. For overloaded intrinsics, parameter types must be provided to uniquely identify an overload.
+// See llvm::Intrinsic::getDeclaration
+func (m Module) GetIntrinsic(in Intrinsic, paramTypes []Type) (v Value) {
+	var pt *C.LLVMTypeRef
+	if paramTypes != nil {
+		pt = llvmTypeRefPtr(&paramTypes[0])
+	}
+	v.C = C.LLVMGetIntrinsicDeclaration(m.C, C.unsigned(in), pt, C.size_t(len(paramTypes)))
+	return
+}
+
+// Copies the name of an overloaded intrinsic identified by a given list of parameter types.
+// See llvm::Intrinsic::getName
+func (m Module) CopyOverloadedName(in Intrinsic, paramTypes []Type) string {
+	var pt *C.LLVMTypeRef
+	if paramTypes != nil {
+		pt = llvmTypeRefPtr(&paramTypes[0])
+	}
+	lenght := C.size_t(0)
+	cname := C.LLVMIntrinsicCopyOverloadedName2(m.C, C.unsigned(in), pt, C.size_t(len(paramTypes)), &lenght)
+	defer C.free(unsafe.Pointer(cname))
+	return C.GoStringN(cname, C.int(lenght))
+}
