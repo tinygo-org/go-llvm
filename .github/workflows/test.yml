@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18, 19]
+        llvm: [14, 15, 16, 17, 18, 19, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,23 +18,24 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.22'
-      #- name: Update Homebrew
-      #  if: matrix.llvm == 17 # needed as long as LLVM 17 is still fresh
-      #  run: brew update
+      # Optional step when a LLVM version is very new.
+      - name: Update Homebrew
+        if: matrix.llvm == 20
+        run: brew update
       - name: Install LLVM
         run: HOMEBREW_NO_AUTO_UPDATE=1 brew install llvm@${{ matrix.llvm }}
       - name: Test LLVM ${{ matrix.llvm }}
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 19
+        if: matrix.llvm == 20
         run:
           go test -v
   test-linux:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18, 19]
+        llvm: [14, 15, 16, 17, 18, 19, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,6 +53,6 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 19
+        if: matrix.llvm == 20
         run:
           go test -v
