@@ -18,8 +18,10 @@ package llvm
 #include <stdlib.h>
 */
 import "C"
-import "unsafe"
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
 
 func LinkInMCJIT()       { C.LLVMLinkInMCJIT() }
 func LinkInInterpreter() { C.LLVMLinkInInterpreter() }
@@ -110,6 +112,17 @@ func NewInterpreter(m Module) (ee ExecutionEngine, err error) {
 	return
 }
 
+func NewJITCompiler(m Module, optLevel int) (ee ExecutionEngine, err error) {
+	var cmsg *C.char
+	fail := C.LLVMCreateJITCompilerForModule(&ee.C, m.C, C.uint(optLevel), &cmsg)
+	if fail != 0 {
+		ee.C = nil
+		err = errors.New(C.GoString(cmsg))
+		C.LLVMDisposeMessage(cmsg)
+	}
+	return
+}
+
 func NewMCJITCompilerOptions() MCJITCompilerOptions {
 	var options C.struct_LLVMMCJITCompilerOptions
 	C.LLVMInitializeMCJITCompilerOptions(&options, C.size_t(unsafe.Sizeof(C.struct_LLVMMCJITCompilerOptions{})))
@@ -157,6 +170,12 @@ func (ee ExecutionEngine) FindFunction(name string) (f Value) {
 	defer C.free(unsafe.Pointer(cname))
 	C.LLVMFindFunction(ee.C, cname, &f.C)
 	return
+}
+
+func (ee ExecutionEngine) GetFunctionAddress(name string) uint64 {
+	cname := C.CString(name)
+	defer C.free(unsafe.Pointer(cname))
+	return uint64(C.LLVMGetFunctionAddress(ee.C, cname))
 }
 
 func (ee ExecutionEngine) RecompileAndRelinkFunction(f Value) unsafe.Pointer {
