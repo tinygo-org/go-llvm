@@ -55,3 +55,32 @@ jobs:
         if: matrix.llvm == 21
         run:
           go test -v
+  test-freebsd:
+    name: test-freebsd
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        llvm: [19, 20]
+    steps:
+    - uses: actions/checkout@v4
+    - name: FreeBSD test 14.3
+      uses: vmactions/freebsd-vm@v1
+      with:
+        release: '14.3'
+        usesh: true
+        prepare: |
+          # Update package database with IGNORE_OSVERSION
+          pkg update -f || true
+          # Install llvm build dependencies
+          pkg install -y llvm${{ matrix.llvm }}
+          # Install default version go dependency
+          pkg install -y go
+        run: |
+          # Show environment info
+          echo "FreeBSD version:"
+          freebsd-version
+          # Test with llvm${{ matrix.llvm }}
+          echo "Clang ${{ matrix.llvm }} version info:"
+          /usr/local/llvm${{ matrix.llvm }}/bin/clang --version
+          echo "Test with llvm${{ matrix.llvm }} tag"
+          go test -v -tags=llvm${{ matrix.llvm }}
