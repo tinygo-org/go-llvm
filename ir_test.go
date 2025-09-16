@@ -62,7 +62,6 @@ func TestAttributes(t *testing.T) {
 		"nest",
 		"noalias",
 		"nobuiltin",
-		"nocapture",
 		"noduplicate",
 		"noimplicitfloat",
 		"noinline",
