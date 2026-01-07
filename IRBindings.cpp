@@ -18,6 +18,7 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/ConstantRange.h"
 
 using namespace llvm;
 
@@ -84,4 +85,25 @@ LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                           ConstraintsSize, HasSideEffects,
                           IsAlignStack,
                           Dialect, CanThrow);
+}
+
+LLVMAttributeRef LLVMGoCreateSmallRangeAttribute(
+  LLVMContextRef C,
+  unsigned KindID,
+  unsigned bits,
+  uint64_t lower,
+  uint64_t upper
+) {
+#if LLVM_VERSION_MAJOR >= 19
+  return wrap(Attribute::get(
+    *unwrap(C),
+    (Attribute::AttrKind)KindID,
+    ConstantRange(
+      APInt(bits, lower),
+      APInt(bits, upper)
+    )
+  ));
+#else
+  return nullptr;
+#endif
 }
