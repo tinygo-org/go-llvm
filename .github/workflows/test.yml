@@ -55,3 +55,26 @@ jobs:
         if: matrix.llvm == 21
         run:
           go test -v
+  test-linux-fedora:
+    # Fedora uses different paths than other systems, so testing it separately.
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        llvm: [19, 20, 21]
+    container: fedora:43
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies (default LLVM)
+        if: matrix.llvm == 21
+        run: dnf install --assumeyes g++ golang llvm-devel
+      - name: Install dependencies (older LLVM)
+        if: matrix.llvm != 21
+        run: dnf install --assumeyes g++ golang llvm${{ matrix.llvm }}-devel
+      - name: Test LLVM ${{ matrix.llvm }}
+        run:
+          go test -v -tags=llvm${{ matrix.llvm }}
+      - name: Test default LLVM
+        if: matrix.llvm == 21
+        run:
+          go test -v
