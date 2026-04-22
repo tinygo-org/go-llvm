@@ -27,7 +27,7 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 21
+        if: matrix.llvm == 20
         run:
           go test -v
   test-linux:
@@ -52,7 +52,7 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 21
+        if: matrix.llvm == 20
         run:
           go test -v
   test-linux-fedora:
@@ -75,6 +75,6 @@ jobs:
         run:
           go test -v -tags=llvm${{ matrix.llvm }}
       - name: Test default LLVM
-        if: matrix.llvm == 21
+        if: matrix.llvm == 20
         run:
           go test -v
