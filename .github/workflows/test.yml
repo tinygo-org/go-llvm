@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18, 19, 20, 21]
+        llvm: [14, 15, 16, 17, 18, 19, 20, 21, 22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        llvm: [14, 15, 16, 17, 18, 19, 20, 21]
+        llvm: [14, 15, 16, 17, 18, 19, 20, 21, 22]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
