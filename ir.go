@@ -792,6 +792,18 @@ func (v Value) Operand(i int) (rv Value)   { rv.C = C.LLVMGetOperand(v.C, C.unsi
 func (v Value) SetOperand(i int, op Value) { C.LLVMSetOperand(v.C, C.unsigned(i), op.C) }
 func (v Value) OperandsCount() int         { return int(C.LLVMGetNumOperands(v.C)) }
 
+// Operations on terminator instructions (br, switch, etc). Unlike operands,
+// the number and meaning of successors has been stable across LLVM versions,
+// making these a safe, version-independent way to enumerate the destination
+// blocks of a switch instruction: successor 0 is the default destination,
+// and successors 1..N-1 correspond to case 0..N-2 (see GetSwitchCaseValue for
+// the matching case value).
+func (v Value) SuccessorsCount() int { return int(C.LLVMGetNumSuccessors(v.C)) }
+func (v Value) Successor(i int) (bb BasicBlock) {
+	bb.C = C.LLVMGetSuccessor(v.C, C.unsigned(i))
+	return
+}
+
 // Operations on constants of any type
 func ConstNull(t Type) (v Value)        { v.C = C.LLVMConstNull(t.C); return }
 func ConstAllOnes(t Type) (v Value)     { v.C = C.LLVMConstAllOnes(t.C); return }
