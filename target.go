@@ -16,6 +16,7 @@ package llvm
 #include "llvm-c/Core.h"
 #include "llvm-c/Target.h"
 #include "llvm-c/TargetMachine.h"
+#include "deprecated.h"
 #include <stdlib.h>
 */
 import "C"
@@ -143,7 +144,10 @@ func (td TargetData) PointerSize() int { return int(C.LLVMPointerSize(td.C)) }
 
 // Returns the integer type that is the same size as a pointer on a target.
 // See the method llvm::TargetData::getIntPtrType.
-func (td TargetData) IntPtrType() (t Type) { t.C = C.LLVMIntPtrType(td.C); return }
+func (td TargetData) IntPtrType() (t Type) {
+	t.C = C.LLVMIntPtrTypeInContext(C.LLVMGetGlobalContext_wrap(), td.C)
+	return
+}
 
 // Computes the size of a type in bytes for a target.
 // See the method llvm::TargetData::getTypeSizeInBits.
