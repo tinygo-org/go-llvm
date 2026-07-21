@@ -393,6 +393,11 @@ func (c Context) CreateTypeAttribute(kind uint, t Type) (a Attribute) {
 	return
 }
 
+func (c Context) CreateSmallRangeAttribute(kind uint, bits uint, lower, upper uint64) (a Attribute) {
+	a.C = C.LLVMGoCreateSmallRangeAttribute(c.C, C.unsigned(kind), C.unsigned(bits), C.uint64_t(lower), C.uint64_t(upper))
+	return
+}
+
 func (a Attribute) GetTypeValue() (t Type) {
 	t.C = C.LLVMGetTypeAttributeValue(a.C)
 	return
