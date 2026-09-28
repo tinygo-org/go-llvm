@@ -63,7 +63,7 @@ func TestPasses(t *testing.T) {
 	defer pbo.Dispose()
 
 	t.Run("no error running default pass", func(t *testing.T) {
-		err := mod.RunPasses("default<Os>", mt, pbo)
+		err := mod.RunPasses("default<O2>", mt, pbo)
 		if err != nil {
 			t.Error(err)
 		}
