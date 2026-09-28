@@ -133,7 +133,6 @@ func llvmMetadataRefs(mds []Metadata) (*C.LLVMMetadataRef, C.unsigned) {
 
 const (
 	Ret         Opcode = C.LLVMRet
-	Br          Opcode = C.LLVMBr
 	Switch      Opcode = C.LLVMSwitch
 	IndirectBr  Opcode = C.LLVMIndirectBr
 	Invoke      Opcode = C.LLVMInvoke
@@ -903,7 +902,7 @@ func (v Value) ConstGetAsString() string {
 
 // Constant expressions
 func (v Value) Opcode() Opcode             { return Opcode(C.LLVMGetConstOpcode(v.C)) }
-func (v Value) InstructionOpcode() Opcode  { return Opcode(C.LLVMGetInstructionOpcode(v.C)) }
+func (v Value) InstructionOpcode() Opcode  { return normalizeOpcode(Opcode(C.LLVMGetInstructionOpcode(v.C))) }
 func AlignOf(t Type) (v Value)             { v.C = C.LLVMAlignOf(t.C); return }
 func SizeOf(t Type) (v Value)              { v.C = C.LLVMSizeOf(t.C); return }
 func ConstNeg(v Value) (rv Value)          { rv.C = C.LLVMConstNeg(v.C); return }
