@@ -7,6 +7,9 @@
 #include "llvm/Analysis/CGSCCPassManager.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Transforms/IPO/ThinLTOBitcodeWriter.h"
+#if LLVM_VERSION_MAJOR >= 23
+#include "llvm/Transforms/Utils/AssignGUID.h"
+#endif
 #else
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
@@ -39,6 +42,12 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
   PB.registerLoopAnalyses(LAM);
   PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
   llvm::ModulePassManager MPM;
+#if LLVM_VERSION_MAJOR >= 23
+  // LLVM 23 requires every GlobalValue's GUID to be explicitly assigned by
+  // AssignGUIDPass before anything (here, the module summary built inside
+  // ThinLTOBitcodeWriterPass) calls GlobalValue::getGUID() on it.
+  MPM.addPass(llvm::AssignGUIDPass());
+#endif
   MPM.addPass(llvm::ThinLTOBitcodeWriterPass(OS, nullptr));
   MPM.run(*llvm::unwrap(M), MAM);
 #else

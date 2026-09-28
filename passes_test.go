@@ -1,6 +1,10 @@
 package llvm
 
-import "testing"
+import (
+	"strconv"
+	"strings"
+	"testing"
+)
 
 func TestPasses(t *testing.T) {
 	InitializeNativeTarget()
@@ -63,7 +67,14 @@ func TestPasses(t *testing.T) {
 	defer pbo.Dispose()
 
 	t.Run("no error running default pass", func(t *testing.T) {
-		err := mod.RunPasses("default<Os>", mt, pbo)
+		// LLVM 23 dropped Os/Oz from the pipeline text parser.
+		// Use O2 plus the optsize/minsize function attributes instead.
+		level := "Os"
+		majorVersion, _ := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
+		if majorVersion >= 23 {
+			level = "O2"
+		}
+		err := mod.RunPasses("default<"+level+">", mt, pbo)
 		if err != nil {
 			t.Error(err)
 		}
