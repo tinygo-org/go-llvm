@@ -43,9 +43,8 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
   PB.crossRegisterProxies(LAM, FAM, CGAM, MAM);
   llvm::ModulePassManager MPM;
 #if LLVM_VERSION_MAJOR >= 23
-  // LLVM 23 requires every GlobalValue's GUID to be explicitly assigned by
-  // AssignGUIDPass before anything (here, the module summary built inside
-  // ThinLTOBitcodeWriterPass) calls GlobalValue::getGUID() on it.
+  // LLVM 23 requires AssignGUIDPass before any GlobalValue::getGUID() call.
+  // ThinLTOBitcodeWriterPass needs it internally for the module summary.
   MPM.addPass(llvm::AssignGUIDPass());
 #endif
   MPM.addPass(llvm::ThinLTOBitcodeWriterPass(OS, nullptr));
