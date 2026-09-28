@@ -22,6 +22,7 @@ package llvm
 import "C"
 import (
 	"errors"
+	"os"
 	"unsafe"
 )
 
@@ -1959,6 +1960,14 @@ func (mp ModuleProvider) Dispose() { C.LLVMDisposeModuleProvider(mp.C) }
 //-------------------------------------------------------------------------
 
 func NewMemoryBufferFromFile(path string) (b MemoryBuffer, err error) {
+	// Stat the file to ensure it exists before attempting to create a memory buffer from it.
+	// This also ensures that go test is aware we're attempting to access a real file and
+	// includes that in the test cache hash.
+	_, err = os.Stat(path)
+	if err != nil {
+		return b, err
+	}
+
 	var cmsg *C.char
 	cpath := C.CString(path)
 	defer C.free(unsafe.Pointer(cpath))
