@@ -12,3 +12,5 @@ import "C"
 const Br Opcode = C.LLVMBr
 
 func normalizeOpcode(op Opcode) Opcode { return op }
+
+func (v Value) IsABranchInst() (rv Value) { rv.C = C.LLVMIsABranchInst(v.C); return }
