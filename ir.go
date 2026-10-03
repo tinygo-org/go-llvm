@@ -901,7 +901,7 @@ func (v Value) ConstGetAsString() string {
 
 // Constant expressions
 func (v Value) Opcode() Opcode             { return Opcode(C.LLVMGetConstOpcode(v.C)) }
-func (v Value) InstructionOpcode() Opcode  { return normalizeOpcode(Opcode(C.LLVMGetInstructionOpcode(v.C))) }
+func (v Value) InstructionOpcode() Opcode  { return Opcode(C.LLVMGetInstructionOpcode(v.C)) }
 func AlignOf(t Type) (v Value)             { v.C = C.LLVMAlignOf(t.C); return }
 func SizeOf(t Type) (v Value)              { v.C = C.LLVMSizeOf(t.C); return }
 func ConstNeg(v Value) (rv Value)          { rv.C = C.LLVMConstNeg(v.C); return }
