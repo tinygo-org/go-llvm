@@ -11,9 +11,9 @@ package llvm
 // #cgo freebsd      CPPFLAGS: -I/usr/local/llvm22/include -I/usr/local/llvm22/include/llvm-c -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 // #cgo freebsd      CXXFLAGS: -std=c++17
 // #cgo freebsd      LDFLAGS: -L/usr/local/llvm22/lib -lLLVM
-// #cgo linux        CPPFLAGS: -I/usr/include/llvm-22 -I/usr/include/llvm-c-22 -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
+// #cgo linux        CPPFLAGS: -I/usr/include/llvm-22 -I/usr/include/llvm-c-22 -I/usr/lib/llvm22/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 // #cgo linux        CXXFLAGS: -std=c++17
-// #cgo linux        LDFLAGS: -L/usr/lib/llvm-22/lib -lLLVM-22
+// #cgo linux        LDFLAGS: -L/usr/lib/llvm-22/lib -L/usr/lib/llvm22/lib -lLLVM-22
 import "C"
 
 type run_build_sh int
