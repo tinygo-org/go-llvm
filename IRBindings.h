@@ -55,6 +55,14 @@ LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 LLVMBool IsAlignStack,
                                 LLVMInlineAsmDialect Dialect, LLVMBool CanThrow);
 
+LLVMAttributeRef LLVMGoCreateSmallRangeAttribute(
+    LLVMContextRef C,
+    unsigned KindID,
+    unsigned bits,
+    uint64_t lower,
+    uint64_t upper
+);
+
 #ifdef __cplusplus
 }
 #endif
