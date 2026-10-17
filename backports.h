@@ -6,6 +6,14 @@
 extern "C" {
 #endif
 
+typedef struct LLVMGoOpaqueLinker *LLVMGoLinkerRef;
+
+LLVMGoLinkerRef LLVMGoCreateLinker(LLVMModuleRef Dest);
+
+LLVMBool LLVMGoLinkerLinkModule(LLVMGoLinkerRef L, LLVMModuleRef Src);
+
+void LLVMGoDisposeLinker(LLVMGoLinkerRef L);
+
 void LLVMGlobalObjectAddMetadata(LLVMValueRef objValue, unsigned KindID, LLVMMetadataRef md);
 
 LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M);
