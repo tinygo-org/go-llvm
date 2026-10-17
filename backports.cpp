@@ -15,6 +15,7 @@
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #endif
 #include "llvm/IR/Module.h"
+#include "llvm/Linker/Linker.h"
 #include "llvm/Pass.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Transforms/IPO.h"
@@ -69,4 +70,17 @@ void LLVMGoDIBuilderInsertDbgValueRecordAtEnd(
   // Old llvm.dbg.* API.
   LLVMDIBuilderInsertDbgValueAtEnd(Builder, Val, VarInfo, Expr, DebugLoc, Block);
 #endif
+}
+
+LLVMGoLinkerRef LLVMGoCreateLinker(LLVMModuleRef Dest) {
+  return reinterpret_cast<LLVMGoLinkerRef>(new llvm::Linker(*llvm::unwrap(Dest)));
+}
+
+LLVMBool LLVMGoLinkerLinkModule(LLVMGoLinkerRef L, LLVMModuleRef Src) {
+  std::unique_ptr<llvm::Module> M(llvm::unwrap(Src));
+  return reinterpret_cast<llvm::Linker *>(L)->linkInModule(std::move(M));
+}
+
+void LLVMGoDisposeLinker(LLVMGoLinkerRef L) {
+  delete reinterpret_cast<llvm::Linker *>(L);
 }
