@@ -14,6 +14,9 @@ package llvm
 
 /*
 #include "llvm/Config/llvm-config.h"
+#if LLVM_VERSION_MAJOR < 15
+#error LLVM 15 or later is required
+#endif
 */
 import "C"
 
