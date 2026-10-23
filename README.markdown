@@ -6,7 +6,9 @@ Currently supported:
 
   * LLVM 23, 22, 21, 20, 19, 18, 17, 16 and 15 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
   * LLVM 23, 22, 21, 20, 19, 18, 17, 16 and 15 from Homebrew on macOS.
-  * Any of the above versions with a manually built LLVM through the `byollvm` build tag. You need to set up `CFLAGS`/`LDFLAGS` etc yourself in this case.
+  * Any supported version with a manually built LLVM through the `byollvm` build tag.
+    You need to set up `CFLAGS`/`LDFLAGS` etc yourself in this case. If you use a
+    version other than LLVM 20, also set the matching `llvmNN` build tag.
 
 You can select the LLVM version using a build tag, for example `-tags=llvm17`
 to use LLVM 17.
@@ -17,7 +19,11 @@ If you have a supported LLVM installation, you should be able to do a simple `go
 
     go get tinygo.org/x/go-llvm
 
-You can use build tags to select a LLVM version. For example, use `-tags=llvm15` to select LLVM 15. Setting a build tag for a LLVM version that is not supported will be ignored.
+You can use build tags to select a LLVM version. For example, use `-tags=llvm15`
+to select LLVM 15. Setting a build tag for a LLVM version that is not supported
+will be ignored. With a manually built LLVM, combine `byollvm` with the matching
+version tag unless you use LLVM 20, for example `-tags="byollvm,llvm17"`. The
+`byollvm` tag does not detect the LLVM version.
 
 ## License
 
