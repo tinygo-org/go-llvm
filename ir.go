@@ -234,22 +234,33 @@ const (
 // llvm.TypeKind
 //-------------------------------------------------------------------------
 
+//go:generate go tool stringer -type=TypeKind -tags=llvm23
+
 const (
-	VoidTypeKind      TypeKind = C.LLVMVoidTypeKind
-	FloatTypeKind     TypeKind = C.LLVMFloatTypeKind
-	DoubleTypeKind    TypeKind = C.LLVMDoubleTypeKind
-	X86_FP80TypeKind  TypeKind = C.LLVMX86_FP80TypeKind
-	FP128TypeKind     TypeKind = C.LLVMFP128TypeKind
-	PPC_FP128TypeKind TypeKind = C.LLVMPPC_FP128TypeKind
-	LabelTypeKind     TypeKind = C.LLVMLabelTypeKind
-	IntegerTypeKind   TypeKind = C.LLVMIntegerTypeKind
-	FunctionTypeKind  TypeKind = C.LLVMFunctionTypeKind
-	StructTypeKind    TypeKind = C.LLVMStructTypeKind
-	ArrayTypeKind     TypeKind = C.LLVMArrayTypeKind
-	PointerTypeKind   TypeKind = C.LLVMPointerTypeKind
-	VectorTypeKind    TypeKind = C.LLVMVectorTypeKind
-	MetadataTypeKind  TypeKind = C.LLVMMetadataTypeKind
-	TokenTypeKind     TypeKind = C.LLVMTokenTypeKind
+	VoidTypeKind           TypeKind = C.LLVMVoidTypeKind
+	HalfTypeKind           TypeKind = C.LLVMHalfTypeKind
+	BFloatTypeKind         TypeKind = C.LLVMBFloatTypeKind
+	FloatTypeKind          TypeKind = C.LLVMFloatTypeKind
+	DoubleTypeKind         TypeKind = C.LLVMDoubleTypeKind
+	X86_FP80TypeKind       TypeKind = C.LLVMX86_FP80TypeKind
+	FP128TypeKind          TypeKind = C.LLVMFP128TypeKind
+	PPC_FP128TypeKind      TypeKind = C.LLVMPPC_FP128TypeKind
+	LabelTypeKind          TypeKind = C.LLVMLabelTypeKind
+	IntegerTypeKind        TypeKind = C.LLVMIntegerTypeKind
+	FunctionTypeKind       TypeKind = C.LLVMFunctionTypeKind
+	StructTypeKind         TypeKind = C.LLVMStructTypeKind
+	ArrayTypeKind          TypeKind = C.LLVMArrayTypeKind
+	PointerTypeKind        TypeKind = C.LLVMPointerTypeKind
+	VectorTypeKind         TypeKind = C.LLVMVectorTypeKind
+	ScalableVectorTypeKind TypeKind = C.LLVMScalableVectorTypeKind
+	MetadataTypeKind       TypeKind = C.LLVMMetadataTypeKind
+	TokenTypeKind          TypeKind = C.LLVMTokenTypeKind
+	X86_AMXTypeKind        TypeKind = C.LLVMX86_AMXTypeKind
+
+	// Use stable ABI values for kinds not defined by every supported LLVM version.
+	X86_MMXTypeKind   TypeKind = 15 // Removed in LLVM 20.
+	TargetExtTypeKind TypeKind = 20 // LLVM 16 and later.
+	ByteTypeKind      TypeKind = 21 // LLVM 23 and later.
 )
 
 //-------------------------------------------------------------------------
