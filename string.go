@@ -48,6 +48,8 @@ func (t TypeKind) String() string {
 	panic("unreachable")
 }
 
+// String returns a diagnostic description of t. Pointers are printed as
+// PointerType, without a pointee type or address space.
 func (t Type) String() string {
 	ts := typeStringer{s: make(map[Type]string)}
 	return ts.typeString(t)
@@ -69,8 +71,6 @@ func (ts *typeStringer) typeString(t Type) string {
 	switch k {
 	case ArrayTypeKind:
 		s += fmt.Sprintf("(%v[%v])", ts.typeString(t.ElementType()), t.ArrayLength())
-	case PointerTypeKind:
-		s += fmt.Sprintf("(%v)", ts.typeString(t.ElementType()))
 	case FunctionTypeKind:
 		params := t.ParamTypes()
 		s += "("
