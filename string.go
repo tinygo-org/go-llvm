@@ -12,41 +12,10 @@
 
 package llvm
 
-import "fmt"
-
-func (t TypeKind) String() string {
-	switch t {
-	case VoidTypeKind:
-		return "VoidTypeKind"
-	case FloatTypeKind:
-		return "FloatTypeKind"
-	case DoubleTypeKind:
-		return "DoubleTypeKind"
-	case X86_FP80TypeKind:
-		return "X86_FP80TypeKind"
-	case FP128TypeKind:
-		return "FP128TypeKind"
-	case PPC_FP128TypeKind:
-		return "PPC_FP128TypeKind"
-	case LabelTypeKind:
-		return "LabelTypeKind"
-	case IntegerTypeKind:
-		return "IntegerTypeKind"
-	case FunctionTypeKind:
-		return "FunctionTypeKind"
-	case StructTypeKind:
-		return "StructTypeKind"
-	case ArrayTypeKind:
-		return "ArrayTypeKind"
-	case PointerTypeKind:
-		return "PointerTypeKind"
-	case VectorTypeKind:
-		return "VectorTypeKind"
-	case MetadataTypeKind:
-		return "MetadataTypeKind"
-	}
-	panic("unreachable")
-}
+import (
+	"fmt"
+	"strings"
+)
 
 // String returns a diagnostic description of t. Pointers are printed as
 // PointerType, without a pointee type or address space.
@@ -65,8 +34,7 @@ func (ts *typeStringer) typeString(t Type) string {
 	}
 
 	k := t.TypeKind()
-	s := k.String()
-	s = s[:len(s)-len("Kind")]
+	s := strings.TrimSuffix(k.String(), "Kind")
 
 	switch k {
 	case ArrayTypeKind:
