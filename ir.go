@@ -166,6 +166,8 @@ const (
 	Load          Opcode = C.LLVMLoad
 	Store         Opcode = C.LLVMStore
 	GetElementPtr Opcode = C.LLVMGetElementPtr
+	AtomicCmpXchg Opcode = C.LLVMAtomicCmpXchg
+	AtomicRMW     Opcode = C.LLVMAtomicRMW
 
 	// Cast Operators
 	Trunc    Opcode = C.LLVMTrunc
@@ -1023,6 +1025,12 @@ func (v Value) IsAtomicSingleThread() bool { return C.LLVMIsAtomicSingleThread(v
 func (v Value) SetAtomicSingleThread(singleThread bool) {
 	C.LLVMSetAtomicSingleThread(v.C, boolToLLVMBool(singleThread))
 }
+
+// AtomicRMWBinOp returns the operation of an atomic read-modify-write instruction.
+func (v Value) AtomicRMWBinOp() AtomicRMWBinOp {
+	return AtomicRMWBinOp(C.LLVMGetAtomicRMWBinOp(v.C))
+}
+
 func (v Value) CmpXchgSuccessOrdering() AtomicOrdering {
 	return AtomicOrdering(C.LLVMGetCmpXchgSuccessOrdering(v.C))
 }

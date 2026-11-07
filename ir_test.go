@@ -155,3 +155,72 @@ func TestSubtypes(t *testing.T) {
 		t.Errorf("Expected second struct field to be int8")
 	}
 }
+
+func TestAtomicRMWBinOp(t *testing.T) {
+	ctx := NewContext()
+	defer ctx.Dispose()
+	mod := ctx.NewModule("")
+	defer mod.Dispose()
+	b := ctx.NewBuilder()
+	defer b.Dispose()
+
+	fn := AddFunction(mod, "foo", FunctionType(ctx.VoidType(), nil, false))
+	b.SetInsertPointAtEnd(ctx.AddBasicBlock(fn, "entry"))
+	ptr := b.CreateAlloca(ctx.Int32Type(), "ptr")
+	val := ConstInt(ctx.Int32Type(), 1, false)
+
+	tests := []struct {
+		name string
+		op   AtomicRMWBinOp
+	}{
+		{"xchg", AtomicRMWBinOpXchg},
+		{"add", AtomicRMWBinOpAdd},
+		{"sub", AtomicRMWBinOpSub},
+		{"and", AtomicRMWBinOpAnd},
+		{"nand", AtomicRMWBinOpNand},
+		{"or", AtomicRMWBinOpOr},
+		{"xor", AtomicRMWBinOpXor},
+		{"max", AtomicRMWBinOpMax},
+		{"min", AtomicRMWBinOpMin},
+		{"umax", AtomicRMWBinOpUMax},
+		{"umin", AtomicRMWBinOpUMin},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			inst := b.CreateAtomicRMW(tt.op, ptr, val, AtomicOrderingSequentiallyConsistent, false)
+			if got := inst.InstructionOpcode(); got != AtomicRMW {
+				t.Fatalf("got opcode %d, want %d", got, AtomicRMW)
+			}
+			if got := inst.AtomicRMWBinOp(); got != tt.op {
+				t.Errorf("got operation %d, want %d", got, tt.op)
+			}
+		})
+	}
+	b.CreateRetVoid()
+	if err := VerifyModule(mod, ReturnStatusAction); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAtomicCmpXchgOpcode(t *testing.T) {
+	ctx := NewContext()
+	defer ctx.Dispose()
+	mod := ctx.NewModule("")
+	defer mod.Dispose()
+	b := ctx.NewBuilder()
+	defer b.Dispose()
+
+	fn := AddFunction(mod, "foo", FunctionType(ctx.VoidType(), nil, false))
+	b.SetInsertPointAtEnd(ctx.AddBasicBlock(fn, "entry"))
+	ptr := b.CreateAlloca(ctx.Int32Type(), "ptr")
+	cmp := ConstInt(ctx.Int32Type(), 0, false)
+	val := ConstInt(ctx.Int32Type(), 1, false)
+	inst := b.CreateAtomicCmpXchg(ptr, cmp, val, AtomicOrderingSequentiallyConsistent, AtomicOrderingSequentiallyConsistent, false)
+	if got := inst.InstructionOpcode(); got != AtomicCmpXchg {
+		t.Errorf("got opcode %d, want %d", got, AtomicCmpXchg)
+	}
+	b.CreateRetVoid()
+	if err := VerifyModule(mod, ReturnStatusAction); err != nil {
+		t.Fatal(err)
+	}
+}
