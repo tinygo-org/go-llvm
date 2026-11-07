@@ -21,3 +21,6 @@ package llvm
 import "C"
 
 const Version = C.LLVM_VERSION_STRING
+
+// VersionMajor is the LLVM major version.
+const VersionMajor = C.LLVM_VERSION_MAJOR

@@ -21,8 +21,7 @@ func TestCreateConstantRangeAttribute(t *testing.T) {
 	kind := AttributeKindID("range")
 	attr := ctx.CreateConstantRangeAttribute(kind, 32, []uint64{0}, []uint64{100})
 
-	majorVersion, _ := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
-	if majorVersion < 19 {
+	if VersionMajor < 19 {
 		if !attr.IsNil() {
 			t.Errorf("got attribute %p, want nil before LLVM 19", attr.C)
 		}
