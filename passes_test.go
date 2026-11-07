@@ -1,8 +1,6 @@
 package llvm
 
 import (
-	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -70,8 +68,7 @@ func TestPasses(t *testing.T) {
 		// LLVM 23 dropped Os/Oz from the pipeline text parser.
 		// Use O2 plus the optsize/minsize function attributes instead.
 		level := "Os"
-		majorVersion, _ := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
-		if majorVersion >= 23 {
+		if VersionMajor >= 23 {
 			level = "O2"
 		}
 		err := mod.RunPasses("default<"+level+">", mt, pbo)

@@ -1,7 +1,6 @@
 package llvm
 
 import (
-	"strconv"
 	"strings"
 	"testing"
 )
@@ -11,8 +10,7 @@ import (
 // LLVM 21) round-trips through the generic enum-attribute API, and that a
 // value of 0 corresponds to CaptureInfo::none(), i.e. captures(none).
 func TestCapturesAttribute(t *testing.T) {
-	majorVersion, _ := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
-	if majorVersion < 21 {
+	if VersionMajor < 21 {
 		t.Skip("not llvm 21")
 	}
 

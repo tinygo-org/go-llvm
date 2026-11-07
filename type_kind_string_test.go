@@ -3,8 +3,6 @@ package llvm
 import (
 	"os"
 	"path/filepath"
-	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -76,10 +74,6 @@ func TestNonPointerTypeString(t *testing.T) {
 }
 
 func TestTypeStringParsed(t *testing.T) {
-	major, err := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
-	if err != nil {
-		t.Fatal(err)
-	}
 	tests := []struct {
 		name       string
 		ir         string
@@ -101,10 +95,10 @@ func TestTypeStringParsed(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if major < tt.minVersion {
+			if VersionMajor < tt.minVersion {
 				t.Skipf("requires LLVM %d or later", tt.minVersion)
 			}
-			if tt.maxVersion != 0 && major > tt.maxVersion {
+			if tt.maxVersion != 0 && VersionMajor > tt.maxVersion {
 				t.Skipf("removed after LLVM %d", tt.maxVersion)
 			}
 			path := filepath.Join(t.TempDir(), "type.ll")

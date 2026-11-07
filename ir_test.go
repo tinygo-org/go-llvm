@@ -13,7 +13,6 @@
 package llvm
 
 import (
-	"strconv"
 	"strings"
 	"testing"
 )
@@ -90,12 +89,7 @@ func TestAttributes(t *testing.T) {
 	}
 
 	for _, name := range attrTests {
-		majorVersion, err := strconv.Atoi(strings.SplitN(Version, ".", 2)[0])
-		if err != nil {
-			// sanity check, should be unreachable
-			t.Errorf("could not parse LLVM version: %v", err)
-		}
-		if majorVersion >= 15 && name == "uwtable" {
+		if VersionMajor >= 15 && name == "uwtable" {
 			// This changed from an EnumAttr to an IntAttr in LLVM 15, and testAttribute doesn't work on such attributes.
 			continue
 		}
