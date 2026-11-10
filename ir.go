@@ -654,6 +654,10 @@ func (t Type) StructElementTypes() []Type {
 	}
 	return out
 }
+func (t Type) StructTypeAtIndex(i int) (rt Type) {
+	rt.C = C.LLVMStructGetTypeAtIndex(t.C, C.unsigned(i))
+	return
+}
 
 // Operations on array, pointer, and vector types (sequence types)
 func (t Type) Subtypes() (ret []Type) {
