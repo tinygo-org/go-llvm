@@ -224,3 +224,15 @@ func TestAtomicCmpXchgOpcode(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestStructTypeAtIndex(t *testing.T) {
+	cont := NewContext()
+	defer cont.Dispose()
+
+	st := cont.StructType([]Type{cont.Int32Type(), cont.Int8Type(), cont.Int64Type()}, false)
+	for i, want := range st.StructElementTypes() {
+		if got := st.StructTypeAtIndex(i); got != want {
+			t.Errorf("StructTypeAtIndex(%d) = %v, want %v", i, got, want)
+		}
+	}
+}
