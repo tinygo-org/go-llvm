@@ -372,7 +372,10 @@ const (
 
 func NewContext() Context    { return Context{C.LLVMContextCreate()} }
 func GlobalContext() Context { return Context{C.LLVMGetGlobalContext_wrap()} }
-func (c Context) Dispose()   { C.LLVMContextDispose(c.C) }
+func (c Context) Dispose() {
+	c.SetDiagnosticHandler(nil)
+	C.LLVMContextDispose(c.C)
+}
 
 func (c Context) MDKindID(name string) (id int) {
 	cname := C.CString(name)
