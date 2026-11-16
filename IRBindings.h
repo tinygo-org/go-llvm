@@ -49,6 +49,14 @@ void LLVMGoSetCurrentDebugLocation(LLVMBuilderRef Bref, unsigned Line,
 
 struct LLVMDebugLocMetadata LLVMGoGetCurrentDebugLocation(LLVMBuilderRef Bref);
 
+// LLVMGoBasicBlockInCycle returns whether the block can be reached from itself
+// through at least one CFG edge, so it may run more than once per call.
+LLVMBool LLVMGoBasicBlockInCycle(LLVMBasicBlockRef BB);
+
+// LLVMGoGetUnderlyingObject wraps llvm::getUnderlyingObject without a limit on
+// the lookup depth.
+LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V);
+
 LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 size_t AsmStringSize, char *Constraints,
                                 size_t ConstraintsSize, LLVMBool HasSideEffects,
