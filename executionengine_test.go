@@ -30,10 +30,10 @@ func TestFactorial(t *testing.T) {
 	fac.SetFunctionCallConv(CCallConv)
 	n := fac.Param(0)
 
-	entry := AddBasicBlock(fac, "entry")
-	iftrue := AddBasicBlock(fac, "iftrue")
-	iffalse := AddBasicBlock(fac, "iffalse")
-	end := AddBasicBlock(fac, "end")
+	entry := fac.AddBasicBlock("entry")
+	iftrue := fac.AddBasicBlock("iftrue")
+	iffalse := fac.AddBasicBlock("iffalse")
+	end := fac.AddBasicBlock("end")
 
 	builder := ctx.NewBuilder()
 	defer builder.Dispose()

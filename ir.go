@@ -1203,18 +1203,43 @@ func (c Context) AddBasicBlock(f Value, name string) (bb BasicBlock) {
 	bb.C = C.LLVMAppendBasicBlockInContext(c.C, f.C, cname)
 	return
 }
+
+// AddBasicBlock appends a basic block to the function, in its context.
+func (v Value) AddBasicBlock(name string) BasicBlock {
+	return v.Type().Context().AddBasicBlock(v, name)
+}
+
 func (c Context) InsertBasicBlock(ref BasicBlock, name string) (bb BasicBlock) {
 	cname := C.CString(name)
 	defer C.free(unsafe.Pointer(cname))
 	bb.C = C.LLVMInsertBasicBlockInContext(c.C, ref.C, cname)
 	return
 }
-func AddBasicBlock(f Value, name string) (bb BasicBlock) {
-	return GlobalContext().AddBasicBlock(f, name)
+
+// InsertBasicBlock inserts a basic block before bb, in the context that owns bb.
+func (bb BasicBlock) InsertBasicBlock(name string) BasicBlock {
+	return bb.AsValue().Type().Context().InsertBasicBlock(bb, name)
 }
-func InsertBasicBlock(ref BasicBlock, name string) (bb BasicBlock) {
-	return GlobalContext().InsertBasicBlock(ref, name)
+
+// AddBasicBlock appends a basic block to f, in the context that owns f.
+//
+// Deprecated: use [Value.AddBasicBlock].
+//
+//go:fix inline
+func AddBasicBlock(f Value, name string) BasicBlock {
+	return f.AddBasicBlock(name)
 }
+
+// InsertBasicBlock inserts a basic block before ref, in the context that owns
+// ref.
+//
+// Deprecated: use [BasicBlock.InsertBasicBlock].
+//
+//go:fix inline
+func InsertBasicBlock(ref BasicBlock, name string) BasicBlock {
+	return ref.InsertBasicBlock(name)
+}
+
 func (bb BasicBlock) EraseFromParent()          { C.LLVMDeleteBasicBlock(bb.C) }
 func (bb BasicBlock) MoveBefore(pos BasicBlock) { C.LLVMMoveBasicBlockBefore(bb.C, pos.C) }
 func (bb BasicBlock) MoveAfter(pos BasicBlock)  { C.LLVMMoveBasicBlockAfter(bb.C, pos.C) }

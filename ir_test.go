@@ -236,3 +236,64 @@ func TestStructTypeAtIndex(t *testing.T) {
 		}
 	}
 }
+
+func testBasicBlockContexts(t *testing.T, test func(*testing.T, Context, Value)) {
+	t.Helper()
+	custom := NewContext()
+	defer custom.Dispose()
+	for _, tc := range []struct {
+		name string
+		ctx  Context
+	}{
+		{"global", GlobalContext()},
+		{"custom", custom},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := tc.ctx
+			mod := ctx.NewModule("bb_context")
+			defer mod.Dispose()
+
+			fn := AddFunction(mod, "f", FunctionType(ctx.VoidType(), nil, false))
+			test(t, ctx, fn)
+		})
+	}
+}
+
+func checkBasicBlock(t *testing.T, name string, bb BasicBlock, ctx Context, fn Value) {
+	t.Helper()
+	if got := bb.AsValue().Type().Context(); got.C != ctx.C {
+		t.Errorf("%s: block is in context %p, want %p", name, got.C, ctx.C)
+	}
+	if got := bb.Parent(); got != fn {
+		t.Errorf("%s: parent is %v, want %v", name, got, fn)
+	}
+}
+
+// Dedicated tests keep go fix from inlining the deprecated functions.
+func TestAddBasicBlock(t *testing.T) {
+	testBasicBlockContexts(t, func(t *testing.T, ctx Context, fn Value) {
+		receiverEntry := fn.AddBasicBlock("receiver")
+		entry := AddBasicBlock(fn, "entry")
+		checkBasicBlock(t, "Value.AddBasicBlock", receiverEntry, ctx, fn)
+		checkBasicBlock(t, "AddBasicBlock", entry, ctx, fn)
+		if got := NextBasicBlock(receiverEntry); got != entry {
+			t.Errorf("AddBasicBlock: next block is %v, want %v", got, entry)
+		}
+	})
+}
+
+func TestInsertBasicBlock(t *testing.T) {
+	testBasicBlockContexts(t, func(t *testing.T, ctx Context, fn Value) {
+		entry := fn.AddBasicBlock("entry")
+		receiverBefore := entry.InsertBasicBlock("receiver_before")
+		before := InsertBasicBlock(entry, "before")
+		checkBasicBlock(t, "BasicBlock.InsertBasicBlock", receiverBefore, ctx, fn)
+		checkBasicBlock(t, "InsertBasicBlock", before, ctx, fn)
+		if got := NextBasicBlock(receiverBefore); got != before {
+			t.Errorf("BasicBlock.InsertBasicBlock: next block is %v, want %v", got, before)
+		}
+		if got := NextBasicBlock(before); got != entry {
+			t.Errorf("InsertBasicBlock: next block is %v, want %v", got, entry)
+		}
+	})
+}
