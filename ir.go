@@ -1230,6 +1230,10 @@ func (bb BasicBlock) LastInstruction() (v Value)   { v.C = C.LLVMGetLastInstruct
 func NextInstruction(v Value) (rv Value)           { rv.C = C.LLVMGetNextInstruction(v.C); return }
 func PrevInstruction(v Value) (rv Value)           { rv.C = C.LLVMGetPreviousInstruction(v.C); return }
 
+// InCycle returns whether the block can be reached from itself through at least
+// one edge, so it may run more than once per call.
+func (bb BasicBlock) InCycle() bool { return C.LLVMGoBasicBlockInCycle(bb.C) != 0 }
+
 // Operations on call sites
 func (v Value) SetInstructionCallConv(cc CallConv) {
 	C.LLVMSetInstructionCallConv(v.C, C.unsigned(cc))
@@ -2063,3 +2067,10 @@ func (pm PassManager) FinalizeFunc() bool { return C.LLVMFinalizeFunctionPassMan
 // the module provider.
 // See llvm::PassManagerBase::~PassManagerBase.
 func (pm PassManager) Dispose() { C.LLVMDisposePassManager(pm.C) }
+
+// UnderlyingObject returns the object that the pointer is derived from. See
+// llvm::getUnderlyingObject.
+func (v Value) UnderlyingObject() (rv Value) {
+	rv.C = C.LLVMGoGetUnderlyingObject(v.C)
+	return
+}

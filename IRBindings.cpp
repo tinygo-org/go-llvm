@@ -11,7 +11,10 @@
 //===----------------------------------------------------------------------===//
 
 #include "IRBindings.h"
+#include "llvm/ADT/SCCIterator.h"
+#include "llvm/Analysis/ValueTracking.h"
 #include "llvm/IR/Attributes.h"
+#include "llvm/IR/CFG.h"
 #include "llvm/IR/DebugLoc.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/Function.h"
@@ -84,4 +87,18 @@ LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                           ConstraintsSize, HasSideEffects,
                           IsAlignStack,
                           Dialect, CanThrow);
+}
+
+LLVMBool LLVMGoBasicBlockInCycle(LLVMBasicBlockRef BB) {
+  // The SCC that contains BB is the last one that is visited when starting at
+  // BB. It has a cycle when it has more than one block or a self edge.
+  bool InCycle = false;
+  for (auto I = scc_begin(unwrap(BB)); !I.isAtEnd(); ++I)
+    InCycle = I.hasCycle();
+  return InCycle;
+}
+
+LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V) {
+  // A MaxLookup of 0 means no limit.
+  return wrap(getUnderlyingObject(unwrap(V), 0));
 }
