@@ -104,5 +104,8 @@ LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V) {
 }
 
 unsigned LLVMGoCountInstructions(LLVMValueRef Fn) {
-  return unwrap<Function>(Fn)->getInstructionCount();
+  unsigned N = 0;
+  for (const BasicBlock &BB : *unwrap<Function>(Fn))
+    N += BB.size();
+  return N;
 }
