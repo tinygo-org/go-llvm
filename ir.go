@@ -1172,6 +1172,11 @@ func (v Value) IsBasicBlock() bool            { return C.LLVMValueIsBasicBlock(v
 func (v Value) AsBasicBlock() (bb BasicBlock) { bb.C = C.LLVMValueAsBasicBlock(v.C); return }
 func (bb BasicBlock) Parent() (v Value)       { v.C = C.LLVMGetBasicBlockParent(bb.C); return }
 func (v Value) BasicBlocksCount() int         { return int(C.LLVMCountBasicBlocks(v.C)) }
+
+// InstructionsCount returns the number of instructions in the function. See
+// llvm::Function::getInstructionCount.
+func (v Value) InstructionsCount() int { return int(C.LLVMGoCountInstructions(v.C)) }
+
 func (v Value) BasicBlocks() []BasicBlock {
 	out := make([]BasicBlock, v.BasicBlocksCount())
 	C.LLVMGetBasicBlocks(v.C, llvmBasicBlockRefPtr(&out[0]))

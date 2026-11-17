@@ -57,6 +57,9 @@ LLVMBool LLVMGoBasicBlockInCycle(LLVMBasicBlockRef BB);
 // the lookup depth.
 LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V);
 
+// LLVMGoCountInstructions returns the number of instructions in a function.
+unsigned LLVMGoCountInstructions(LLVMValueRef Fn);
+
 LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 size_t AsmStringSize, char *Constraints,
                                 size_t ConstraintsSize, LLVMBool HasSideEffects,
