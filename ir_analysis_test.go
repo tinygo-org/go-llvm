@@ -167,3 +167,34 @@ func TestUnderlyingObject(t *testing.T) {
 		}
 	}
 }
+
+func TestInstructionsCount(t *testing.T) {
+	ctx := NewContext()
+	defer ctx.Dispose()
+	mod := ctx.NewModule("count")
+	defer mod.Dispose()
+	decl := AddFunction(mod, "decl", FunctionType(ctx.VoidType(), nil, false))
+	if got := decl.InstructionsCount(); got != 0 {
+		t.Errorf("declaration: got %d instructions, want 0", got)
+	}
+	rng := rand.New(rand.NewSource(1))
+	for range 20 {
+		succs := make([][]int, 1+rng.Intn(30))
+		for i := range succs {
+			for range rng.Intn(4) {
+				succs[i] = append(succs[i], rng.Intn(len(succs)))
+			}
+		}
+		fn := buildCFG(ctx, mod, succs)[0].Parent()
+		want := 0
+		for bb := fn.FirstBasicBlock(); !bb.IsNil(); bb = NextBasicBlock(bb) {
+			for inst := bb.FirstInstruction(); !inst.IsNil(); inst = NextInstruction(inst) {
+				want++
+			}
+		}
+		if got := fn.InstructionsCount(); got != want {
+			t.Errorf("got %d instructions, want %d", got, want)
+		}
+		fn.EraseFromParentAsFunction()
+	}
+}

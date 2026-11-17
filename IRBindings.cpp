@@ -102,3 +102,7 @@ LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V) {
   // A MaxLookup of 0 means no limit.
   return wrap(getUnderlyingObject(unwrap(V), 0));
 }
+
+unsigned LLVMGoCountInstructions(LLVMValueRef Fn) {
+  return unwrap<Function>(Fn)->getInstructionCount();
+}
