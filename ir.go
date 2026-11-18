@@ -733,6 +733,7 @@ func (v Value) IsAConstantAggregateZero() (rv Value) {
 	return
 }
 func (v Value) IsAConstantArray() (rv Value)       { rv.C = C.LLVMIsAConstantArray(v.C); return }
+func (v Value) IsAConstantDataSequential() bool    { return C.LLVMIsAConstantDataSequential(v.C) != nil }
 func (v Value) IsAConstantExpr() (rv Value)        { rv.C = C.LLVMIsAConstantExpr(v.C); return }
 func (v Value) IsAConstantFP() (rv Value)          { rv.C = C.LLVMIsAConstantFP(v.C); return }
 func (v Value) IsAConstantInt() (rv Value)         { rv.C = C.LLVMIsAConstantInt(v.C); return }
@@ -922,6 +923,26 @@ func (v Value) ConstGetAsString() string {
 // is out of range. See Constant::getAggregateElement.
 func (v Value) AggregateElement(idx int) (rv Value) {
 	rv.C = C.LLVMGetAggregateElement(v.C, C.unsigned(idx))
+	return
+}
+
+// RawDataValues returns the bytes of a ConstantDataArray or
+// ConstantDataVector in host byte order.
+func (v Value) RawDataValues() []byte {
+	length := C.size_t(0)
+	data := C.LLVMGoGetRawDataValues(v.C, &length)
+	return C.GoBytes(unsafe.Pointer(data), C.int(length))
+}
+
+// ConstDataArray returns an array of elementType with the contents of data, in
+// host byte order. elementType must be i8, i16, i32, i64, half, bfloat, float
+// or double, and len(data) must be a multiple of its size.
+func ConstDataArray(elementType Type, data []byte) (v Value) {
+	var ptr *C.char
+	if len(data) != 0 {
+		ptr = (*C.char)(unsafe.Pointer(&data[0]))
+	}
+	v.C = C.LLVMGoConstDataArray(elementType.C, ptr, C.size_t(len(data)))
 	return
 }
 

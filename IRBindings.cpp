@@ -15,6 +15,7 @@
 #include "llvm/Analysis/ValueTracking.h"
 #include "llvm/IR/Attributes.h"
 #include "llvm/IR/CFG.h"
+#include "llvm/IR/Constants.h"
 #include "llvm/IR/DebugLoc.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/Function.h"
@@ -108,4 +109,17 @@ unsigned LLVMGoCountInstructions(LLVMValueRef Fn) {
   for (const BasicBlock &BB : *unwrap<Function>(Fn))
     N += BB.size();
   return N;
+}
+
+const char *LLVMGoGetRawDataValues(LLVMValueRef C, size_t *SizeInBytes) {
+  StringRef Data = unwrap<ConstantDataSequential>(C)->getRawDataValues();
+  *SizeInBytes = Data.size();
+  return Data.data();
+}
+
+LLVMValueRef LLVMGoConstDataArray(LLVMTypeRef ElementTy, const char *Data,
+                                  size_t SizeInBytes) {
+  Type *Ty = unwrap(ElementTy);
+  size_t Len = SizeInBytes / (Ty->getPrimitiveSizeInBits() / 8);
+  return wrap(ConstantDataArray::getRaw(StringRef(Data, SizeInBytes), Len, Ty));
 }
