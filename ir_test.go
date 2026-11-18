@@ -297,3 +297,29 @@ func TestInsertBasicBlock(t *testing.T) {
 		}
 	})
 }
+
+func TestAggregateElement(t *testing.T) {
+	ctx := NewContext()
+	defer ctx.Dispose()
+	i32 := ctx.Int32Type()
+	one := ConstInt(i32, 1, false)
+	str := ctx.ConstString("ab", false)
+	structType := ctx.StructType([]Type{i32, str.Type()}, false)
+
+	for _, test := range []struct {
+		name string
+		agg  Value
+		idx  int
+		want Value
+	}{
+		{"struct", ctx.ConstStruct([]Value{one, str}, false), 1, str},
+		{"data array", str, 1, ConstInt(ctx.Int8Type(), 'b', false)},
+		{"zeroinitializer", ConstNull(structType), 0, ConstNull(i32)},
+		{"undef", Undef(structType), 1, Undef(str.Type())},
+		{"out of range", str, 2, Value{}},
+	} {
+		if got := test.agg.AggregateElement(test.idx); got != test.want {
+			t.Errorf("%s: AggregateElement(%d) = %v, want %v", test.name, test.idx, got, test.want)
+		}
+	}
+}

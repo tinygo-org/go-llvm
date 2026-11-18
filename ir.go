@@ -917,6 +917,14 @@ func (v Value) ConstGetAsString() string {
 	return C.GoStringN(cstr, C.int(length))
 }
 
+// AggregateElement returns element idx of a constant struct, array or vector,
+// including zeroinitializer and constant data. It returns a nil Value if idx
+// is out of range. See Constant::getAggregateElement.
+func (v Value) AggregateElement(idx int) (rv Value) {
+	rv.C = C.LLVMGetAggregateElement(v.C, C.unsigned(idx))
+	return
+}
+
 // Constant expressions
 func (v Value) Opcode() Opcode             { return Opcode(C.LLVMGetConstOpcode(v.C)) }
 func (v Value) InstructionOpcode() Opcode  { return Opcode(C.LLVMGetInstructionOpcode(v.C)) }
