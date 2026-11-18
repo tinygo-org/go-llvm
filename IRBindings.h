@@ -60,6 +60,15 @@ LLVMValueRef LLVMGoGetUnderlyingObject(LLVMValueRef V);
 // LLVMGoCountInstructions returns the number of instructions in a function.
 unsigned LLVMGoCountInstructions(LLVMValueRef Fn);
 
+// LLVMGoGetRawDataValues wraps ConstantDataSequential::getRawDataValues. The
+// bytes are in host byte order.
+const char *LLVMGoGetRawDataValues(LLVMValueRef C, size_t *SizeInBytes);
+
+// LLVMGoConstDataArray wraps ConstantDataArray::getRaw. The bytes are in host
+// byte order.
+LLVMValueRef LLVMGoConstDataArray(LLVMTypeRef ElementTy, const char *Data,
+                                  size_t SizeInBytes);
+
 LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 size_t AsmStringSize, char *Constraints,
                                 size_t ConstraintsSize, LLVMBool HasSideEffects,
