@@ -13,6 +13,7 @@
 package llvm
 
 import (
+	"encoding/binary"
 	"strings"
 	"testing"
 )
@@ -321,5 +322,35 @@ func TestAggregateElement(t *testing.T) {
 		if got := test.agg.AggregateElement(test.idx); got != test.want {
 			t.Errorf("%s: AggregateElement(%d) = %v, want %v", test.name, test.idx, got, test.want)
 		}
+	}
+}
+
+func TestConstDataArray(t *testing.T) {
+	ctx := NewContext()
+	defer ctx.Dispose()
+	i32 := ctx.Int32Type()
+
+	data := binary.NativeEndian.AppendUint32(nil, 1)
+	data = binary.NativeEndian.AppendUint32(data, 2)
+	data = binary.NativeEndian.AppendUint32(data, 3)
+	array := ConstDataArray(i32, data)
+	want := ConstArray(i32, []Value{
+		ConstInt(i32, 1, false),
+		ConstInt(i32, 2, false),
+		ConstInt(i32, 3, false),
+	})
+	if array != want {
+		t.Errorf("ConstDataArray = %s, want %s", array.String(), want.String())
+	}
+	if !array.IsAConstantDataSequential() {
+		t.Fatal("expected a ConstantDataSequential")
+	}
+	if got := array.RawDataValues(); string(got) != string(data) {
+		t.Errorf("RawDataValues = %v, want %v", got, data)
+	}
+
+	zero := ConstDataArray(ctx.Int8Type(), make([]byte, 4))
+	if !zero.IsNull() || zero.IsAConstantDataSequential() {
+		t.Errorf("all zero data: got %s, want zeroinitializer", zero.String())
 	}
 }
