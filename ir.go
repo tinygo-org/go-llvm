@@ -963,12 +963,12 @@ func ConstXor(lhs, rhs Value) (v Value)    { v.C = C.LLVMConstXor(lhs.C, rhs.C);
 
 func ConstGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
-	rv.C = C.LLVMConstGEP2(t.C, v.C, ptr, nvals)
+	rv.C = C.LLVMConstGEP2_wrap(t.C, v.C, ptr, nvals)
 	return
 }
 func ConstInBoundsGEP(t Type, v Value, indices []Value) (rv Value) {
 	ptr, nvals := llvmValueRefs(indices)
-	rv.C = C.LLVMConstInBoundsGEP2(t.C, v.C, ptr, nvals)
+	rv.C = C.LLVMConstInBoundsGEP2_wrap(t.C, v.C, ptr, nvals)
 	return
 }
 func ConstTrunc(v Value, t Type) (rv Value)    { rv.C = C.LLVMConstTrunc(v.C, t.C); return }
@@ -1385,7 +1385,7 @@ func (v Value) AllocatedType() (t Type) { t.C = C.LLVMGetAllocatedType(v.C); ret
 
 // NewBuilder returns a builder that is not tied to a module. On LLVM 24, set an
 // insertion point before any other use, or use Module.NewBuilder instead.
-func (c Context) NewBuilder() (b Builder) { b.C = C.LLVMCreateBuilderInContext(c.C); return }
+func (c Context) NewBuilder() (b Builder) { b.C = C.LLVMCreateBuilderInContext_wrap(c.C); return }
 
 // NewBuilder returns a builder for instructions in m. Unlike
 // Context.NewBuilder, it can be used before an insertion point is set.

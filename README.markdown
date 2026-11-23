@@ -4,7 +4,7 @@ This library provides bindings to a system-installed LLVM.
 
 Currently supported:
 
-  * LLVM 23, 22, 21, 20, 19, 18, 17, 16 and 15 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
+  * LLVM 24 (development), 23, 22, 21, 20, 19, 18, 17, 16 and 15 from [apt.llvm.org](http://apt.llvm.org/) on Debian/Ubuntu.
   * LLVM 23, 22, 21, 20, 19, 18, 17, 16 and 15 from Homebrew on macOS.
   * Any supported version with a manually built LLVM through the `byollvm` build tag.
     You need to set up `CFLAGS`/`LDFLAGS` etc yourself in this case. If you use a
