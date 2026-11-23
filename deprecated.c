@@ -6,9 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// This file wraps LLVMGetGlobalContext, which was deprecated in LLVM 22 but
-// has no non-deprecated replacement. All other wrapped functions are
-// handled by calling their context-aware counterparts from Go.
+// LLVM 22 deprecates LLVMGetGlobalContext, and LLVM 24 deprecates
+// LLVMConstGEP2, LLVMConstInBoundsGEP2 and LLVMCreateBuilderInContext.
 //
 //===----------------------------------------------------------------------===//
 
@@ -19,6 +18,23 @@
 
 LLVMContextRef LLVMGetGlobalContext_wrap(void) {
   return LLVMGetGlobalContext();
+}
+
+LLVMValueRef LLVMConstGEP2_wrap(LLVMTypeRef Ty, LLVMValueRef ConstantVal,
+                                LLVMValueRef *ConstantIndices,
+                                unsigned NumIndices) {
+  return LLVMConstGEP2(Ty, ConstantVal, ConstantIndices, NumIndices);
+}
+
+LLVMValueRef LLVMConstInBoundsGEP2_wrap(LLVMTypeRef Ty,
+                                        LLVMValueRef ConstantVal,
+                                        LLVMValueRef *ConstantIndices,
+                                        unsigned NumIndices) {
+  return LLVMConstInBoundsGEP2(Ty, ConstantVal, ConstantIndices, NumIndices);
+}
+
+LLVMBuilderRef LLVMCreateBuilderInContext_wrap(LLVMContextRef C) {
+  return LLVMCreateBuilderInContext(C);
 }
 
 #pragma GCC diagnostic pop

@@ -37,7 +37,12 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
   llvm::FunctionAnalysisManager FAM;
   llvm::CGSCCAnalysisManager CGAM;
   llvm::ModuleAnalysisManager MAM;
+#if LLVM_VERSION_MAJOR >= 24
+  // LLVM 24 PassBuilder reads its library options from an LLVMContext.
+  llvm::PassBuilder PB(llvm::unwrap(M)->getContext());
+#else
   llvm::PassBuilder PB;
+#endif
   PB.registerModuleAnalyses(MAM);
   PB.registerCGSCCAnalyses(CGAM);
   PB.registerFunctionAnalyses(FAM);

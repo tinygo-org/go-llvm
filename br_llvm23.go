@@ -1,4 +1,4 @@
-//go:build llvm23
+//go:build llvm23 || llvm24
 
 package llvm
 
