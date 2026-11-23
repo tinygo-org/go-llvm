@@ -16,6 +16,7 @@ package llvm
 #include "llvm-c/Core.h"
 #include "llvm-c/Comdat.h"
 #include "IRBindings.h"
+#include "backports.h"
 #include "deprecated.h"
 #include <stdlib.h>
 */
@@ -1384,7 +1385,13 @@ func (v Value) AllocatedType() (t Type) { t.C = C.LLVMGetAllocatedType(v.C); ret
 // An instruction builder represents a point within a basic block, and is the
 // exclusive means of building instructions using the C interface.
 
+// NewBuilder returns a builder that is not tied to a module. On LLVM 24, set an
+// insertion point before any other use, or use Module.NewBuilder instead.
 func (c Context) NewBuilder() (b Builder) { b.C = C.LLVMCreateBuilderInContext(c.C); return }
+
+// NewBuilder returns a builder for instructions in m. Unlike
+// Context.NewBuilder, it can be used before an insertion point is set.
+func (m Module) NewBuilder() (b Builder) { b.C = C.LLVMGoCreateBuilderForModule(m.C); return }
 func (b Builder) SetInsertPoint(block BasicBlock, instr Value) {
 	C.LLVMPositionBuilder(b.C, block.C, instr.C)
 }
