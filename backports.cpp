@@ -19,6 +19,7 @@
 #include "llvm/Pass.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Transforms/IPO.h"
+#include "llvm-c/Core.h"
 #include "llvm-c/DebugInfo.h"
 
 void LLVMGlobalObjectAddMetadata(LLVMValueRef Global, unsigned KindID, LLVMMetadataRef MD) {
@@ -56,6 +57,16 @@ LLVMMemoryBufferRef LLVMGoWriteThinLTOBitcodeToMemoryBuffer(LLVMModuleRef M) {
   PM.run(*llvm::unwrap(M));
 #endif
   return llvm::wrap(llvm::MemoryBuffer::getMemBufferCopy(OS.str()).release());
+}
+
+// LLVM 24 aborts if a builder from LLVMCreateBuilderInContext is used before
+// it has an insertion point. LLVMCreateBuilderForModule does not.
+LLVMBuilderRef LLVMGoCreateBuilderForModule(LLVMModuleRef M) {
+#if LLVM_VERSION_MAJOR >= 24
+  return LLVMCreateBuilderForModule(M);
+#else
+  return LLVMCreateBuilderInContext(LLVMGetModuleContext(M));
+#endif
 }
 
 void LLVMGoDIBuilderInsertDbgValueRecordAtEnd(

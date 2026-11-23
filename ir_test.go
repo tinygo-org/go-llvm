@@ -103,7 +103,7 @@ func TestDebugLoc(t *testing.T) {
 	mod := ctx.NewModule("")
 	defer mod.Dispose()
 
-	b := ctx.NewBuilder()
+	b := mod.NewBuilder()
 	defer b.Dispose()
 
 	d := NewDIBuilder(mod)
