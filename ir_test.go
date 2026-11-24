@@ -119,7 +119,7 @@ func TestDebugLoc(t *testing.T) {
 	})
 	scope := d.CreateFunction(file, DIFunction{
 		Name:         "foo",
-		LinkageName:  "foo",
+		LinkageName:  "foo_linkage",
 		Line:         10,
 		ScopeLine:    10,
 		Type:         typeInfo,
@@ -137,6 +137,12 @@ func TestDebugLoc(t *testing.T) {
 	}
 	if loc.Scope.C != scope.C {
 		t.Errorf("Got metadata %v as scope, though wanted %v", loc.Scope.C, scope.C)
+	}
+	if name := scope.SubprogramName(); name != "foo" {
+		t.Errorf("Got subprogram name %q, though wanted \"foo\"", name)
+	}
+	if name := scope.SubprogramLinkageName(); name != "foo_linkage" {
+		t.Errorf("Got subprogram linkage name %q, though wanted \"foo_linkage\"", name)
 	}
 }
 

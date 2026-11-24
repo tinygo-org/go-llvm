@@ -758,3 +758,17 @@ func (md Metadata) ScopeFile() Metadata {
 func (md Metadata) SubprogramLine() uint {
 	return uint(C.LLVMDISubprogramGetLine(md.C))
 }
+
+// SubprogramName returns the name of a DISubprogram.
+func (md Metadata) SubprogramName() string {
+	var length C.unsigned
+	ptr := C.LLVMGoDISubprogramGetName(md.C, &length)
+	return C.GoStringN(ptr, C.int(length))
+}
+
+// SubprogramLinkageName returns the linkage name of a DISubprogram.
+func (md Metadata) SubprogramLinkageName() string {
+	var length C.unsigned
+	ptr := C.LLVMGoDISubprogramGetLinkageName(md.C, &length)
+	return C.GoStringN(ptr, C.int(length))
+}

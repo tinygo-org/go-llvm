@@ -69,6 +69,13 @@ const char *LLVMGoGetRawDataValues(LLVMValueRef C, size_t *SizeInBytes);
 LLVMValueRef LLVMGoConstDataArray(LLVMTypeRef ElementTy, const char *Data,
                                   size_t SizeInBytes);
 
+// LLVMGoDISubprogramGetName returns the name of a DISubprogram.
+const char *LLVMGoDISubprogramGetName(LLVMMetadataRef Subprogram, unsigned *Len);
+
+// LLVMGoDISubprogramGetLinkageName returns the linkage name of a DISubprogram.
+const char *LLVMGoDISubprogramGetLinkageName(LLVMMetadataRef Subprogram,
+                                             unsigned *Len);
+
 LLVMValueRef LLVMGoGetInlineAsm(LLVMTypeRef Ty, char *AsmString,
                                 size_t AsmStringSize, char *Constraints,
                                 size_t ConstraintsSize, LLVMBool HasSideEffects,
