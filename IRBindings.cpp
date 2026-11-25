@@ -123,3 +123,16 @@ LLVMValueRef LLVMGoConstDataArray(LLVMTypeRef ElementTy, const char *Data,
   size_t Len = SizeInBytes / (Ty->getPrimitiveSizeInBits() / 8);
   return wrap(ConstantDataArray::getRaw(StringRef(Data, SizeInBytes), Len, Ty));
 }
+
+const char *LLVMGoDISubprogramGetName(LLVMMetadataRef Subprogram, unsigned *Len) {
+  StringRef Name = unwrap<DISubprogram>(Subprogram)->getName();
+  *Len = Name.size();
+  return Name.data();
+}
+
+const char *LLVMGoDISubprogramGetLinkageName(LLVMMetadataRef Subprogram,
+                                             unsigned *Len) {
+  StringRef Name = unwrap<DISubprogram>(Subprogram)->getLinkageName();
+  *Len = Name.size();
+  return Name.data();
+}
